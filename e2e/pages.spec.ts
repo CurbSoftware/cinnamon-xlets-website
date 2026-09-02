@@ -93,3 +93,45 @@ test('sitemap and robots exist', async ({ request }) => {
   const robots = await request.get('/robots.txt');
   expect(await robots.text()).toContain('Sitemap:');
 });
+
+// 200% zoom / viewport squeeze. Method: 200% browser zoom on a 1280px-wide
+// window reflows the page to a 640 CSS px layout viewport (deviceScaleFactor
+// only sharpens rendering; layout math is driven by CSS pixels, so asserting
+// at 640 is the faithful 200% reflow check). 320px is the narrow floor.
+// Bars: no horizontal overflow, and header controls must not cram together.
+test('no overflow or control cram at 200% zoom (640 CSS px) and 320px', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly inside the test');
+
+  for (const width of [640, 320]) {
+    await page.setViewportSize({ width, height: 640 });
+    for (const route of [...ROUTES.map((r) => r.path), '/404.html']) {
+      await page.goto(route);
+      await page.waitForLoadState('load');
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      );
+      expect(overflow, `${route} @${width}px`).toBeLessThanOrEqual(1);
+
+      const rects = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('.site-header a, .site-header button')).map(
+          (el) => {
+            const r = el.getBoundingClientRect();
+            return { x: r.x, y: r.y, w: r.width, h: r.height };
+          },
+        ),
+      );
+      for (let i = 0; i < rects.length; i++) {
+        for (let j = i + 1; j < rects.length; j++) {
+          const a = rects[i];
+          const b = rects[j];
+          const overlap =
+            Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x) > 1 &&
+            Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y) > 1;
+          expect(overlap, `header controls ${i} and ${j} overlap at ${route} @${width}px`).toBe(
+            false,
+          );
+        }
+      }
+    }
+  }
+});

@@ -25,7 +25,9 @@
     --pine-975: 0.115 0.005 168;
 
     /* Mint accent. Dark theme primary is mint-400 oklch(0.84 0.17 152);
-       light theme primary is mint-700 oklch(0.62 0.15 155). Mint is
+       light theme primary is mint-800 oklch(0.52 0.13 155), one step darker
+       than mint-700 so every text-bearing use clears 4.5:1 on paper (4.95
+       on --background, 4.70 on raised surfaces). Mint is
        precious: active states, key rules, tile outlines. */
     --mint-50: 0.985 0.02 152;
     --mint-100: 0.96 0.05 152;
@@ -58,7 +60,7 @@
     --muted: 0.92 0.004 168;
     --muted-foreground: 0.442 0.008 168;
 
-    --primary: 0.62 0.15 155;
+    --primary: 0.52 0.13 155;
     --primary-foreground: 0.985 0.002 168;
 
     --secondary: 0.92 0.004 168;
@@ -69,7 +71,7 @@
     --hairline-strong: oklch(var(--mint-700) / 0.5);
     --rule: oklch(var(--pine-400) / 0.4);
 
-    --ring: 0.62 0.15 155;
+    --ring: 0.52 0.13 155;
 
     /* Per-xlet accent: components set --xlet-hue (0-360) on a wrapper; the
        hue tints exactly three things on that surface: index numeral, eyebrow

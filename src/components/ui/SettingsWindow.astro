@@ -46,7 +46,7 @@ const { title, rows, class: className } = Astro.props;
       const control = 'label' in row ? row : null;
       return control ? (
         <>
-          {control.section && <h4 class="settings-window__section">{control.section}</h4>}
+          {control.section && <h3 class="settings-window__section">{control.section}</h3>}
           <div class="settings-window__row">
             <span class="settings-window__label">
               {control.label}
@@ -72,7 +72,7 @@ const { title, rows, class: className } = Astro.props;
           </div>
         </>
       ) : (
-        <h4 class="settings-window__section">{row.section}</h4>
+        <h3 class="settings-window__section">{row.section}</h3>
       );
     })}
   </div>

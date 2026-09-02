@@ -89,6 +89,12 @@ const links = [
       gap: var(--space-4);
     }
 
+    /* below ~364px the nowrap line is wider than the viewport; let it fold
+       (it still fits unwrapped at every signed-off width >= 390px) */
+    .site-footer__project {
+      white-space: normal;
+    }
+
     .site-footer__links {
       justify-content: flex-start;
     }

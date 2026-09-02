@@ -98,8 +98,8 @@ kbd {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  color: oklch(var(--primary-foreground));
-  background: oklch(var(--primary));
+  color: oklch(var(--background));
+  background: oklch(var(--foreground));
   transform: translateY(-200%);
 }
 
