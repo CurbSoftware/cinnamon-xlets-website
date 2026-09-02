@@ -1,0 +1,35 @@
+---
+// Final CTA (brief 4.7): near-full-viewport closing scene, the
+// micro-desktop's simplest form behind it as faint outline shapes.
+import Button from '../../ui/Button.astro';
+import Reveal from '../../ui/Reveal.astro';
+import { LINKS } from '../../../consts';
+---
+
+<section class="finale" aria-labelledby="finale-heading">
+  <div class="finale__shapes" aria-hidden="true">
+    <span class="finale__shape finale__shape--panel"></span>
+    <span class="finale__shape finale__shape--clock"></span>
+    <span class="finale__shape finale__shape--clock finale__shape--clock--late"></span>
+    <span class="finale__tiles">
+      <i class="finale__tile"></i>
+      <i class="finale__tile"></i>
+      <i class="finale__tile finale__tile--active"></i>
+      <i class="finale__tile"></i>
+    </span>
+  </div>
+
+  <div class="finale__inner">
+    <h2 class="finale__statement reveal" id="finale-heading" data-reveal>
+      <span class="finale__line">Five tools.</span>
+      <span class="finale__line finale__accent">One quiet desktop.</span>
+    </h2>
+    <Reveal as="div" class="finale__actions" delay={120}>
+      <Button href="/install/">Install the set</Button>
+      <Button href={LINKS.org} variant="secondary" rel="noopener">Source on GitHub</Button>
+    </Reveal>
+    <Reveal as="p" class="finale__meta" delay={220}>
+      GPL-2.0+ · Open source · CurbSoftware
+    </Reveal>
+  </div>
+</section>

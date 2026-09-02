@@ -1,0 +1,43 @@
+---
+import { Image } from 'astro:assets';
+import Reveal from '../ui/Reveal.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import type { ImageMetadata } from 'astro';
+
+// Mono-numbered editorial feature index beside the config screenshot.
+// Phase 2 agents restyle in styles/landing/xlet.css; markup and data flow
+// are final.
+interface Props {
+  features: string[];
+  configShot: ImageMetadata;
+  name: string;
+}
+
+const { features, configShot, name } = Astro.props;
+---
+
+<section class="xlet-features" aria-labelledby="xlet-features-heading">
+  <div class="xlet-features__copy">
+    <Eyebrow label="Features" />
+    <h2 id="xlet-features-heading" class="xlet-features__heading">What it does</h2>
+    <ol class="xlet-features__list">
+      {features.map((feature, i) => (
+        <Reveal as="li" class="xlet-features__item" delay={i * 60}>
+          <span class="xlet-features__numeral" aria-hidden="true">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <span class="xlet-features__text">{feature}</span>
+        </Reveal>
+      ))}
+    </ol>
+  </div>
+  <Reveal class="xlet-features__media" delay={80}>
+    <Image
+      src={configShot}
+      alt={`${name} settings window`}
+      widths={[1200, 900, 600]}
+      sizes="(min-width: 76rem) 36rem, 90vw"
+      loading="lazy"
+    />
+  </Reveal>
+</section>

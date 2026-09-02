@@ -1,0 +1,70 @@
+/* ---------------------------------------------------------------------------
+   xlets: motion. Vanilla CSS only, driven by src/scripts/main.ts.
+   Rules: everything visible with JS blocked (initial hidden state applies
+   only under html.js), everything instant under reduced motion.
+--------------------------------------------------------------------------- */
+
+/* Initial hidden state. The inline theme script in BaseLayout adds .js to
+   <html>; without JS the element simply renders in place. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+html.js [data-reveal].reveal-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Instant under reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal],
+  html.js [data-reveal].reveal-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Ticker: slow marquee, 60s+ per loop, paused under reduced motion. The
+   track itself must stay gapless: each duplicated group carries its own
+   trailing spacing so translating the track by exactly -50% loops
+   seamlessly. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  animation: marquee 72s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Hero pointer parallax: planes carry data-parallax="N" (full-deflection
+   pixels, 1|3|6|10). initParallax writes the transform; it never runs on
+   touch devices or under reduced motion, and these guards keep the planes
+   pinned even if a stale inline transform lingers. */
+[data-parallax] {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-parallax] {
+    transform: none !important;
+  }
+}

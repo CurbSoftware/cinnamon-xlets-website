@@ -1,0 +1,37 @@
+---
+// Install overview (brief 4.5): the 3-step flow in compact mono, factual and
+// calm, with a link to the full install page.
+import Eyebrow from '../../ui/Eyebrow.astro';
+import Reveal from '../../ui/Reveal.astro';
+---
+
+<section class="install-overview" aria-labelledby="install-heading">
+  <div class="install-overview__inner">
+    <Eyebrow label="Install" />
+    <h2 id="install-heading" class="install-overview__heading">Three steps, no root</h2>
+    <Reveal as="ol" class="install-overview__steps">
+      <li class="install-overview__step">
+        <span class="install-overview__num" aria-hidden="true">01</span>
+        <p>Download the release zip for the xlet from GitHub.</p>
+      </li>
+      <li class="install-overview__step">
+        <span class="install-overview__num" aria-hidden="true">02</span>
+        <p>
+          Extract it into <code>~/.local/share/cinnamon/desklets/</code> (or
+          <code>applets/</code>).
+        </p>
+      </li>
+      <li class="install-overview__step">
+        <span class="install-overview__num" aria-hidden="true">03</span>
+        <p>
+          Restart Cinnamon with Alt-F2 then <code>r</code>, and add the desklet
+          or applet.
+        </p>
+      </li>
+    </Reveal>
+    <Reveal as="p" class="install-overview__note" delay={80}>
+      Settings live outside the install folder and survive every upgrade.
+      <a href="/install/">Full install guide</a>
+    </Reveal>
+  </div>
+</section>

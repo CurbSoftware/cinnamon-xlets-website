@@ -1,0 +1,23 @@
+---
+// Reveal wrapper: adds data-reveal (see styles/motion.css) plus an optional
+// millisecond delay consumed as transition-delay via --reveal-delay.
+// Usage: <Reveal as="section" delay={60}>...</Reveal>
+// Any other props (id, data-*, aria-*) forward to the rendered element;
+// class merges with .reveal, and a caller style string merges with the
+// delay variable.
+interface Props {
+  as?: 'div' | 'section' | 'figure' | 'li' | 'p' | 'span' | 'article' | 'h2' | 'h3';
+  delay?: number;
+  class?: string;
+  style?: string;
+  [attribute: string]: unknown;
+}
+
+const { as: Tag = 'div', delay, class: className, style, ...rest } = Astro.props;
+const styleParts = [style, delay !== undefined ? `--reveal-delay:${delay}ms` : undefined];
+const mergedStyle = styleParts.filter(Boolean).join('; ') || undefined;
+---
+
+<Tag {...rest} class:list={['reveal', className]} data-reveal style={mergedStyle}>
+  <slot />
+</Tag>

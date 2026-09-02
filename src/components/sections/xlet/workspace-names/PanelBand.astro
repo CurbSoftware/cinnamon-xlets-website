@@ -1,0 +1,317 @@
+---
+import Eyebrow from '../../../ui/Eyebrow.astro';
+
+// In Panel Workspace Name: the signature full-bleed panel strip. The hero
+// screenshot is an extreme 3840x2160 panel strip that the shared template
+// frames as a normal shot, so this section compensates: three Cinnamon
+// panel bands run edge to edge, breaking the content column deliberately,
+// one per label mode (name / number + name / number).
+//
+// Full-bleed without 100vw: the strip stack is position:absolute with
+// left/right 0 and no positioned ancestor, so it spans the initial
+// containing block (the layout viewport, scrollbar excluded) and can never
+// cause horizontal overflow. A sibling spacer reserves the same height.
+// No reveal transforms on the stack or its ancestors: a transform would
+// become its containing block.
+const bands = [
+  {
+    mode: '01 / NAME',
+    label: 'Workspace buttons, name only',
+    active: 'WEB',
+    chips: ['WEB', 'CODE', 'CHAT', 'ADMIN'],
+    clock: false,
+  },
+  {
+    mode: '02 / NUMBER + NAME',
+    label: 'Workspace buttons, number and name',
+    active: '1 WEB',
+    chips: ['1 WEB', '2 CODE', '3 CHAT', '4 ADMIN'],
+    clock: true,
+  },
+  {
+    mode: '03 / NUMBER',
+    label: 'Workspace buttons, number only',
+    active: '1',
+    chips: ['1', '2', '3', '4'],
+    clock: false,
+  },
+];
+
+// Panel furniture clock, frozen at build time. No client JavaScript.
+const parts = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'short',
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+}).formatToParts(new Date());
+const p: Record<string, string> = {};
+for (const part of parts) p[part.type] = part.value;
+const clock = `${p.weekday} ${p.day} ${p.month} ${p.hour}:${p.minute}`.toUpperCase();
+---
+
+<section class="wn-band-section" aria-labelledby="wn-band-heading">
+  <div class="wn-band__head">
+    <Eyebrow label="The panel strip" />
+    <h2 id="wn-band-heading" class="wn-band__heading">One band, every workspace</h2>
+    <p class="wn-band__lede">
+      The same panel, three label modes. The active button takes the outlined
+      state in the panel theme; a trailing + adds a workspace. This is the
+      whole applet: visible, current, one click wide.
+    </p>
+  </div>
+
+  <div class="wn-stage">
+    <div class="wn-strips">
+      {
+        bands.map((band) => (
+          <div class="wn-mode">
+            <span class="wn-mode__tag">{band.mode}</span>
+            <div class="wn-strip">
+              <div class="wn-strip__in">
+                <span class="wn-menu" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span class="wn-sep" aria-hidden="true" />
+                <ul class="wn-chips" aria-label={band.label}>
+                  {band.chips.map((chip) => (
+                    <li class:list={['wn-chip', { 'wn-chip--active': chip === band.active }]}>{chip}</li>
+                  ))}
+                  <li class="wn-chip wn-chip--add" aria-label="Add workspace button">
+                    <span aria-hidden="true">+</span>
+                  </li>
+                </ul>
+                {band.clock && <span class="wn-clock" aria-hidden="true">{clock}</span>}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="wn-stage__space" aria-hidden="true"></div>
+  </div>
+
+  <div class="wn-band__notes">
+    <p class="wn-note">
+      <span class="wn-note__label">Scroll wheel</span>
+      Off by default. Turn it on and the wheel walks workspaces forward;
+      reversed walks them back. The old checkbox migrated once to this
+      three-state setting.
+    </p>
+    <ul class="wn-note__states" aria-label="Scroll wheel states">
+      <li class="wn-state wn-state--on">Off</li>
+      <li class="wn-state">Normal</li>
+      <li class="wn-state">Reversed</li>
+    </ul>
+    <p class="wn-note">
+      Vertical panels get compact name prefixes when space runs out, and every
+      button carries its full name as a tooltip and an accessible name.
+    </p>
+  </div>
+</section>
+
+<style>
+  .wn-band-section {
+    margin-top: var(--space-9);
+  }
+
+  .wn-band__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-3);
+  }
+
+  .wn-band__lede {
+    max-width: 52ch;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Geometry. Fixed heights so the abspos stack and the in-flow spacer
+     always agree exactly. */
+  .wn-stage {
+    --wn-h: clamp(2.5rem, 4vw, 3rem);
+    --wn-ann-h: 1.5rem;
+    --wn-gap: 0.5rem;
+    --wn-mode-h: calc(var(--wn-ann-h) + var(--wn-h) + 0.25rem);
+    --wn-total: calc(3 * var(--wn-mode-h) + 2 * var(--wn-gap));
+    --wn-inset: max(var(--gutter), calc((100% - var(--container)) / 2));
+    margin-top: var(--space-5);
+  }
+
+  .wn-strips {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: grid;
+    gap: var(--wn-gap);
+  }
+
+  .wn-stage__space {
+    height: var(--wn-total);
+  }
+
+  .wn-mode {
+    display: grid;
+    gap: var(--space-1);
+    height: var(--wn-mode-h);
+  }
+
+  .wn-mode__tag {
+    height: var(--wn-ann-h);
+    display: flex;
+    align-items: center;
+    padding-inline: var(--wn-inset);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: oklch(var(--xlet-accent));
+  }
+
+  .wn-strip {
+    height: var(--wn-h);
+    background: oklch(var(--panel) / 0.92);
+    border-top: var(--hairline-width) solid var(--hairline-strong);
+    border-bottom: var(--hairline-width) solid var(--hairline);
+  }
+
+  .wn-strip__in {
+    height: 100%;
+    padding-inline: var(--wn-inset);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .wn-menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    inline-size: 0.875rem;
+    flex: none;
+  }
+
+  .wn-menu i {
+    block-size: 0.375rem;
+    background: oklch(var(--panel-foreground) / 0.7);
+  }
+
+  .wn-sep {
+    inline-size: 1px;
+    block-size: 55%;
+    background: var(--rule);
+    flex: none;
+  }
+
+  .wn-chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .wn-chip {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    padding: 0.1875rem 0.4375rem;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    color: oklch(var(--panel-foreground) / 0.82);
+  }
+
+  .wn-chip--active {
+    border-color: oklch(var(--xlet-accent));
+    color: oklch(var(--xlet-accent));
+    background: oklch(var(--xlet-accent) / 0.08);
+    font-weight: 600;
+  }
+
+  .wn-chip--add {
+    color: oklch(var(--panel-foreground) / 0.55);
+  }
+
+  .wn-clock {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    color: oklch(var(--panel-foreground) / 0.62);
+  }
+
+  @media (max-width: 48rem) {
+    .wn-clock {
+      display: none;
+    }
+  }
+
+  /* Narrow panels: drop the decorative menu glyph and separator and tighten
+     the chips so all four workspaces plus the add button still fit. */
+  @media (max-width: 36rem) {
+    .wn-menu,
+    .wn-sep {
+      display: none;
+    }
+
+    .wn-strip__in {
+      gap: var(--space-2);
+    }
+
+    .wn-chip {
+      padding-inline: 0.3125rem;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  .wn-band__notes {
+    margin-top: var(--space-5);
+    display: grid;
+    gap: var(--space-3);
+    max-width: 52ch;
+  }
+
+  .wn-note {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: oklch(var(--muted-foreground));
+  }
+
+  .wn-note__label {
+    display: block;
+    margin-bottom: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: oklch(var(--xlet-accent));
+  }
+
+  .wn-note__states {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .wn-state {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.125rem 0.375rem;
+    border: var(--hairline-width) solid var(--rule);
+    color: oklch(var(--muted-foreground));
+  }
+
+  .wn-state--on {
+    border-color: oklch(var(--xlet-accent) / 0.6);
+    color: oklch(var(--xlet-accent));
+  }
+</style>

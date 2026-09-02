@@ -1,0 +1,27 @@
+---
+// Mono uppercase chip: DESKLET / APPLET kind tags, CURBSOFTWARE org tag,
+// version and license metadata. Square corners, hairline border.
+interface Props {
+  label: string;
+  class?: string;
+}
+
+const { label, class: className } = Astro.props;
+---
+
+<span class:list={['mono-chip', className]}>{label}</span>
+
+<style>
+  .mono-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.375rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+    border: var(--hairline-width) solid var(--rule);
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+// Prev/next strip with the set's index numerals, wrapping around.
+// Numeral derives from order: 110 -> 01 through 150 -> 05.
+interface Props {
+  prev: CollectionEntry<'xlets'>;
+  next: CollectionEntry<'xlets'>;
+}
+
+const { prev, next } = Astro.props;
+const numeral = (order: number) => String(Math.round((order - 100) / 10)).padStart(2, '0');
+---
+
+<nav class="xlet-next" aria-label="More xlets">
+  <a class="xlet-next__link xlet-next__link--prev" href={`/xlets/${prev.id}/`}>
+    <span class="xlet-next__numeral" aria-hidden="true">{numeral(prev.data.order)}</span>
+    <span class="xlet-next__meta">Previous</span>
+    <span class="xlet-next__name">{prev.data.name}</span>
+  </a>
+  <a class="xlet-next__link xlet-next__link--index" href="/#xlets">
+    <span class="xlet-next__meta">All five</span>
+  </a>
+  <a class="xlet-next__link xlet-next__link--next" href={`/xlets/${next.id}/`}>
+    <span class="xlet-next__numeral" aria-hidden="true">{numeral(next.data.order)}</span>
+    <span class="xlet-next__meta">Next</span>
+    <span class="xlet-next__name">{next.data.name}</span>
+  </a>
+</nav>

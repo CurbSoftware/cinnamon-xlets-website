@@ -1,0 +1,38 @@
+---
+// Why these exist (brief 4.4): editorial measure, the README origin stories
+// in the house voice, one pull-quote moment. No invented claims: both stories
+// come from the Panel Profiles and Color Timer Clock READMEs.
+import Eyebrow from '../../ui/Eyebrow.astro';
+import Reveal from '../../ui/Reveal.astro';
+---
+
+<section class="why" aria-label="Why these exist">
+  <div class="why__inner">
+    <Eyebrow label="Why these exist" />
+    <Reveal as="div" class="why__body">
+      <p>
+        Cinnamon usually remembers your panels. It forgets them in one specific
+        place: a multi-head VM where the second display shows up after Cinnamon
+        has already started. You reboot, the second panel and its applets are
+        gone, and you rebuild them by hand. Every reboot. Panel Profiles grew
+        out of that loop: set the panels up once, save the layout as a named
+        profile, restore it with one click.
+      </p>
+      <blockquote class="why__pull">
+        The color is not decoration. It is the signal.
+      </blockquote>
+      <p>
+        Color Timer Clock came from wanting the state of things readable from
+        across the room. The clock shows when AI providers run their
+        low-traffic discounts. The timer counts down to credit resets. The
+        chronometer runs sprints: green for the first half hour, amber sliding
+        to red over the next hour and a half, blue once two hours are up. Blue
+        means take a break.
+      </p>
+      <p>
+        Five tools later the pattern holds: put the information on the desktop,
+        make it legible at a glance, then stay out of the way.
+      </p>
+    </Reveal>
+  </div>
+</section>

@@ -1,0 +1,93 @@
+---
+// Install page (brief section 6): quiet, technical, factual. Commands
+// derive from uuid + kind via lib/xlets.ts; no command string is hardcoded
+// here. Flow + index live in components/sections/install/, styles in
+// styles/landing/install.css.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import InstallFlow from '../components/sections/install/InstallFlow.astro';
+import XletCommandIndex from '../components/sections/install/XletCommandIndex.astro';
+import { getXlets } from '../lib/xlets';
+
+const xlets = await getXlets();
+// concrete example for the flow: the first xlet in the ordered set
+const example = xlets[0];
+---
+
+<BaseLayout
+  title="Install: desklets and applets for Linux Mint Cinnamon"
+  description="Release zip and git install commands for all five xlets. No root needed; settings survive upgrades."
+  canonicalPath="/install/"
+>
+  <div class="install">
+    <header class="install-lede">
+      <Eyebrow label="Install" />
+      <h1>Install</h1>
+      <p class="install-lede__text" data-reveal>
+        No root, no package manager, no repositories to enable. Everything
+        installs into your home directory as five small trees under
+        <code>~/.local/share/cinnamon/</code>. Download, extract, restart,
+        enable. That is the whole ritual.
+      </p>
+    </header>
+
+    <InstallFlow entry={example} />
+
+    <XletCommandIndex entries={xlets} />
+
+    <section class="install-faq" aria-labelledby="install-faq-heading">
+      <Eyebrow label="Troubleshooting" />
+      <h2 id="install-faq-heading">When it does not work</h2>
+      <dl class="install-faq__list">
+        <div class="install-faq__item" data-reveal>
+          <dt>Cinnamon loads nothing after install</dt>
+          <dd>
+            The install directory name must equal the uuid inside
+            <code>metadata.json</code>, including the
+            <code>@curbsoftware</code> suffix. The <code>cp -r</code> commands
+            above already name it correctly. Rename the folder by hand and
+            Cinnamon will quietly refuse to load the xlet.
+          </dd>
+        </div>
+        <div class="install-faq__item" data-reveal style="--reveal-delay:60ms">
+          <dt>You upgraded and nothing changed</dt>
+          <dd>
+            Reloading an xlet re-runs its main script but not its helper modules
+            or stylesheet. Restart Cinnamon properly:
+            <span class="install-faq__kbd">
+              <kbd>Alt</kbd>+<kbd>F2</kbd>, type <kbd>r</kbd>, Enter.
+            </span>
+            Log out and back in if the desktop still feels stale.
+          </dd>
+        </div>
+        <div class="install-faq__item" data-reveal style="--reveal-delay:120ms">
+          <dt>Where the logs are</dt>
+          <dd>
+            Cinnamon writes to <code>~/.xsession-errors</code>. Run
+            <code>tail -f ~/.xsession-errors</code> next to the desktop and
+            grep for the uuid. Everything the xlets log with
+            <code>global.log</code> lands there.
+          </dd>
+        </div>
+        <div class="install-faq__item" data-reveal style="--reveal-delay:180ms">
+          <dt>Opening settings without the mouse</dt>
+          <dd>
+            <code>cinnamon-settings desklets</code> (or
+            <code>cinnamon-settings applets</code>) opens the manager directly.
+            Right-clicking a desklet on the desktop and picking Configure does
+            the same, already scoped to that xlet.
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="install-cta" data-reveal>
+      <p class="install-cta__line">Four steps, five xlets, no root. The rest is configuring.</p>
+      <div class="install-cta__actions">
+        <Button href="/">Back to the desktop</Button>
+        <Button href="/#xlets" variant="secondary">Browse the five</Button>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,57 @@
+---
+// Real anchors only (brief: real anchors, mint tile hover lift).
+// variant: primary (mint fill) or secondary (hairline outline).
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  class?: string;
+  rel?: string;
+}
+
+const { href, variant = 'primary', class: className, rel } = Astro.props;
+---
+
+<a class:list={['btn', `btn--${variant}`, className]} href={href} rel={rel}>
+  <slot />
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: var(--hairline-width) solid transparent;
+    transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn--primary {
+    color: oklch(var(--primary-foreground));
+    background: oklch(var(--primary));
+  }
+
+  .btn--primary:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .btn--secondary {
+    color: oklch(var(--foreground));
+    border-color: var(--hairline-strong);
+    background: oklch(var(--background) / 0.4);
+  }
+
+  .btn--secondary:hover {
+    border-color: oklch(var(--primary));
+    color: oklch(var(--primary));
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+// Ticker (brief 4.2): full-width mono strip, the world clock breathing.
+// Both groups are baked server-side so the CSS marquee loops seamlessly with
+// or without JS; [data-clock] spans go live via initTicker. The moving track
+// is a decorative duplicate, so it is aria-hidden and an sr-only line carries
+// the actual times.
+import { CITIES, timeIn } from './time';
+
+const now = new Date();
+const items = CITIES.map((c) => ({ ...c, time: timeIn(c.tz, now) }));
+---
+
+<section class="ticker" aria-label="World clock times">
+  <p class="visually-hidden">
+    {items.map((item, i) => (
+      <>
+        {item.label} <span data-clock={item.tz}>{item.time}</span>
+        {i < items.length - 1 ? ', ' : '.'}
+      </>
+    ))}
+  </p>
+  <div class="ticker__viewport">
+    <div class="marquee-track ticker__track" aria-hidden="true">
+      {Array.from({ length: 2 }).map(() => (
+        <div class="ticker__group">
+          {items.map((item) => (
+            <span class="ticker__item">
+              <span class="ticker__city">{item.label}</span>
+              <span class="ticker__time" data-clock={item.tz}>{item.time}</span>
+              <span class="ticker__sep">·</span>
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

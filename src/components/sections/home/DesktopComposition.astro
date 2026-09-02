@@ -1,0 +1,88 @@
+---
+// The hero micro-desktop: a live Cinnamon desktop in miniature, built from
+// the products' own grammar (panel chips, clock tiles, a color schedule
+// card, a workspace grid, profile chips). Times are baked at build time and
+// go live via [data-clock] in src/scripts/main.ts; the color card background
+// ramps between schedule stops (see ./time.ts). Four depth planes carry
+// data-parallax="1|3|6|10" px; pointer parallax is enhancement only.
+import { CITIES, timeIn, scheduleAt } from './time';
+
+const cities = CITIES.filter((c) => c.label !== 'UTC');
+const now = new Date();
+const schedule = scheduleAt(now);
+
+const workspaces = [
+  { num: '01', name: 'DESK', active: true },
+  { num: '02', name: 'DEV', active: false },
+  { num: '03', name: 'FOCUS', active: false },
+  { num: '04', name: 'WRITE', active: false },
+];
+const profiles = ['MINIMAL', 'DEVELOPMENT', 'PRESENTATION'];
+---
+
+<div class="microdesk" data-parallax-root>
+  <div class="microdesk__plane" data-parallax="1">
+    <span class="microdesk__raster" aria-hidden="true"></span>
+  </div>
+
+  <div class="microdesk__plane" data-parallax="3">
+    <div class="microdesk__panel">
+      <span class="microdesk__panel-chip microdesk__panel-chip--active">01 DESK</span>
+      <span class="microdesk__panel-chip">02 DEV</span>
+      <span class="microdesk__panel-chip">03 FOCUS</span>
+    </div>
+  </div>
+
+  <div class="microdesk__plane" data-parallax="6">
+    <div class="microdesk__clocks">
+      {
+        cities.map((city) => (
+          <div class="microdesk__clock">
+            <span class="microdesk__clock-city">{city.label}</span>
+            <span class="microdesk__clock-time" data-clock={city.tz}>
+              {timeIn(city.tz, now)}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="microdesk__colorcard"
+      data-color-card
+      style={`--card-bg:${schedule.color};--card-ink:${schedule.ink}`}
+    >
+      <span class="microdesk__colorcard-label">SCHEDULE</span>
+      <span class="microdesk__colorcard-time" data-clock="local">{timeIn(undefined, now)}</span>
+      <span class="microdesk__colorcard-next" data-color-next>
+        NEXT {schedule.next.name} {schedule.nextTime}
+      </span>
+    </div>
+  </div>
+
+  <div class="microdesk__plane" data-parallax="10">
+    <div class="microdesk__wsgrid">
+      {
+        workspaces.map((ws) => (
+          <span class:list={['microdesk__wstile', { 'microdesk__wstile--active': ws.active }]}>
+            <span class="microdesk__wstile-num">{ws.num}</span>
+            <span class="microdesk__wstile-name">{ws.name}</span>
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="microdesk__profiles">
+      <span class="microdesk__profiles-label">PROFILES</span>
+      <span class="microdesk__profiles-row">
+        {
+          profiles.map((p, i) => (
+            <span class:list={['microdesk__profile-chip', { 'microdesk__profile-chip--active': i === 0 }]}>
+              {p}
+            </span>
+          ))
+        }
+      </span>
+    </div>
+  </div>
+</div>

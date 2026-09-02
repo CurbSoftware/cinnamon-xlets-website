@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<BaseLayout
+  title="404: no tile here"
+  description="That page does not exist on xlets.curbsoftware.com."
+>
+  <section class="not-found">
+    <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+      <rect x="14" y="14" width="28" height="28" fill="none" stroke="oklch(var(--primary))" stroke-width="1.5"></rect>
+      <rect x="21" y="21" width="14" height="14" fill="none" stroke="oklch(var(--primary))" stroke-opacity="0.4" stroke-width="1"></rect>
+    </svg>
+    <h1>No tile here</h1>
+    <p>The workspace you switched to is empty. Try the index instead.</p>
+    <div class="not-found__actions">
+      <Button href="/">Back to the desktop</Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: var(--space-10) var(--gutter);
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  h1 {
+    font-size: var(--text-display);
+  }
+</style>

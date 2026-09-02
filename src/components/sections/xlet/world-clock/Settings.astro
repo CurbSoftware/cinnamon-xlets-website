@@ -1,0 +1,269 @@
+---
+import Eyebrow from '../../../ui/Eyebrow.astro';
+import Reveal from '../../../ui/Reveal.astro';
+import SettingsWindow from '../../../ui/SettingsWindow.astro';
+import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
+
+// World Clock settings showcase. Rows are the real labels, defaults and
+// dependency notes from cinnamon-world-clock-desklet@curbsoftware
+// settings-schema.json; nothing here is invented.
+
+const rows: SettingsRow[] = [
+  { section: 'Layout', label: 'Grid layout mode', type: 'select', value: 'Auto (near-square)' },
+  { label: 'Rows (fixed layout)', type: 'entry', value: '2 rows', hint: 'Used when the mode is Fixed' },
+  { section: 'Clock management', label: 'Allow adding, removing and editing clocks', type: 'switch', on: true },
+  { label: 'Show a "+" tile to add a clock', type: 'switch', on: true, hint: 'Needs editing allowed' },
+  { label: 'Confirm before removing a named clock', type: 'switch', on: true, hint: 'Needs editing allowed' },
+  { section: 'Display', label: 'Time format (strftime)', type: 'entry', value: '%H:%M:%S' },
+  { label: 'Date format (strftime)', type: 'entry', value: '%A, %e %B' },
+  { label: 'Maximum time font size', type: 'entry', value: '40 pt', hint: 'Tiles scale down from this size so the time stays inside the cell' },
+  { section: 'Style', label: 'Tile spacing', type: 'entry', value: '4 px' },
+  { label: 'Desklet width', type: 'entry', value: '600 px' },
+];
+
+// One static scene, internally consistent: 16:41 UTC, Wed 2 Sep 2026.
+// Vancouver is the system timezone here, so its tile is outlined.
+const cities = [
+  { name: 'VANCOUVER', time: '09:41', date: 'Wed 02 Sep', offset: 'UTC-07:00', local: true },
+  { name: 'LONDON', time: '17:41', date: 'Wed 02 Sep', offset: 'UTC+01:00' },
+  { name: 'TOKYO', time: '01:41', date: 'Thu 03 Sep', offset: 'UTC+09:00' },
+  { name: 'SYDNEY', time: '02:41', date: 'Thu 03 Sep', offset: 'UTC+10:00' },
+];
+
+const formats = [
+  { pattern: '%H:%M:%S', rendered: '09:41:26', note: 'default time' },
+  { pattern: '%H:%M', rendered: '09:41' },
+  { pattern: '%I:%M %p', rendered: '09:41 AM' },
+  { pattern: '%A, %e %B', rendered: 'Wednesday, 2 September', note: 'default date' },
+  { pattern: '%a %d %b', rendered: 'Wed 02 Sep' },
+];
+---
+
+<section class="wc-settings" aria-labelledby="wc-settings-heading">
+  <Eyebrow label="Settings" />
+  <h2 id="wc-settings-heading" class="wc-settings__heading">The whole grid, one settings window</h2>
+  <p class="wc-settings__lede">
+    Right-click the desklet and choose Configure. Layout, clock management, formats, sizing: these are the real rows, in the real order, with the real defaults.
+  </p>
+
+  <div class="wc-settings__grid">
+    <Reveal class="wc-settings__window">
+      <SettingsWindow title="World Clock Settings" rows={rows} />
+    </Reveal>
+
+    <Reveal class="wc-settings__formats" delay={80}>
+      <h3 class="wc-settings__sub">The clock speaks strftime</h3>
+      <dl class="wc-formats">
+        {
+          formats.map((f) => (
+            <div class="wc-formats__row">
+              <dt class="wc-formats__pattern">
+                <span class="wc-formats__code">{f.pattern}</span>
+                {f.note && <span class="wc-formats__note">{f.note}</span>}
+              </dt>
+              <dd class="wc-formats__rendered">{f.rendered}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="wc-settings__caption">
+        Every tile shares the same two formats. Font sizes are maximums: each tile scales its text down until it fits.
+      </p>
+    </Reveal>
+  </div>
+
+  <Reveal class="wc-settings__strip" delay={120}>
+    <h3 class="wc-settings__sub">Four cities, one grid</h3>
+    <ul class="tz-strip" role="list">
+      {
+        cities.map((c) => (
+          <li class:list={['tz-tile', { 'tz-tile--local': c.local }]}>
+            <span class="tz-tile__city">{c.name}</span>
+            <span class="tz-tile__time">{c.time}</span>
+            <span class="tz-tile__date">{c.date}</span>
+            <span class="tz-tile__offset">{c.offset}</span>
+          </li>
+        ))
+      }
+      <li class="tz-tile tz-tile--add" aria-hidden="true">
+        <span class="tz-tile__plus">+</span>
+      </li>
+    </ul>
+    <p class="wc-settings__caption">
+      Clocks set to your system timezone are outlined; here that is Vancouver. The + tile adds the next one, and right-click edits any tile.
+    </p>
+  </Reveal>
+</section>
+
+<style>
+  .wc-settings {
+    margin-top: var(--space-9);
+  }
+
+  .wc-settings__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-4);
+    max-width: 24ch;
+  }
+
+  .wc-settings__lede {
+    max-width: 52ch;
+    color: oklch(var(--muted-foreground));
+    margin-bottom: var(--space-6);
+  }
+
+  .wc-settings__grid {
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .wc-settings__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+
+  .wc-settings__window {
+    justify-self: center;
+  }
+
+  .wc-settings__sub {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .wc-settings__caption {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: oklch(var(--muted-foreground));
+    max-width: 60ch;
+  }
+
+  /* strftime specimen */
+  .wc-formats {
+    margin: 0;
+    border: var(--hairline-width) solid var(--hairline);
+    background: oklch(var(--card));
+  }
+
+  .wc-formats__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3);
+    border-top: var(--hairline-width) solid var(--rule);
+  }
+
+  .wc-formats__row:first-child {
+    border-top: 0;
+  }
+
+  .wc-formats__pattern {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .wc-formats__code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: oklch(var(--muted-foreground));
+  }
+
+  .wc-formats__note {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 var(--space-2);
+    border: var(--hairline-width) solid var(--hairline-strong);
+    color: oklch(var(--xlet-accent));
+  }
+
+  .wc-formats__rendered {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* timezone strip: west to east, mono labels, local tile outlined */
+  .wc-settings__strip {
+    margin-top: var(--space-7);
+  }
+
+  .tz-strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  @media (max-width: 48rem) {
+    .tz-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tz-tile--add {
+      display: none;
+    }
+  }
+
+  .tz-tile {
+    display: grid;
+    gap: var(--space-1);
+    justify-items: start;
+    padding: var(--space-4);
+    border: var(--hairline-width) solid var(--hairline);
+    background: oklch(var(--card));
+    min-width: 0;
+  }
+
+  .tz-tile--local {
+    outline: 2px solid oklch(var(--xlet-accent));
+    outline-offset: 2px;
+  }
+
+  .tz-tile__city {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .tz-tile__time {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .tz-tile__date {
+    font-size: var(--text-sm);
+  }
+
+  .tz-tile__offset {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: oklch(var(--muted-foreground));
+  }
+
+  .tz-tile--add {
+    align-content: center;
+    justify-items: center;
+    border-style: dashed;
+    background: transparent;
+  }
+
+  .tz-tile__plus {
+    font-family: var(--font-mono);
+    font-size: var(--text-3xl);
+    line-height: 1;
+    color: oklch(var(--muted-foreground));
+  }
+</style>

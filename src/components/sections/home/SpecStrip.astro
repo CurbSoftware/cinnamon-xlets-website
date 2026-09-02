@@ -1,0 +1,37 @@
+---
+// Spec strip (brief 4.6): one product-spec mono line, not badges. Counts come
+// from the content collection so the line cannot drift from the set.
+import { LINKS } from '../../../consts';
+import type { XletEntry } from '../../../lib/xlets';
+
+interface Props {
+  xlets: XletEntry[];
+}
+
+const { xlets } = Astro.props;
+const desklets = xlets.filter((x) => x.data.kind === 'desklet').length;
+const applets = xlets.length - desklets;
+
+const parts = [
+  'OPEN SOURCE',
+  'GPL-2.0+',
+  `${desklets} DESKLETS`,
+  `${applets} APPLETS`,
+  'LINUX MINT CINNAMON',
+];
+---
+
+<section class="specstrip" aria-label="Project specification">
+  <p class="specstrip__line">
+    {
+      parts.map((part, i) => (
+        <>
+          {i > 0 && <span class="specstrip__sep" aria-hidden="true">·</span>}
+          <span>{part}</span>
+        </>
+      ))
+    }
+    <span class="specstrip__sep" aria-hidden="true">·</span>
+    <a class="specstrip__link" href={LINKS.org} rel="noopener">GITHUB</a>
+  </p>
+</section>

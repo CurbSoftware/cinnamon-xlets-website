@@ -1,0 +1,88 @@
+---
+import { SITE } from '../consts';
+import Nav from '../components/layout/Nav.astro';
+import Footer from '../components/layout/Footer.astro';
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource-variable/spline-sans-mono';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/motion.css';
+import '../styles/landing.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+}
+
+const {
+  title = `${SITE.name}: desklets and applets for Linux Mint Cinnamon`,
+  description = SITE.description,
+  canonicalPath = '/',
+  ogImage = '/og-default.jpg',
+} = Astro.props;
+
+const canonical = new URL(canonicalPath, SITE.url).href;
+const ogImageURL = new URL(ogImage, SITE.url).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="robots" content="index,follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageURL} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <meta name="theme-color" content="#1a1d1c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+
+    <script is:inline>
+      // Theme: single source of truth. Reads localStorage 'xlets-theme',
+      // falls back to prefers-color-scheme, applies data-theme on <html>.
+      // Also flags JS availability so the reveal system can hide elements
+      // initially only when JS will actually reveal them.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        var t;
+        try {
+          t = localStorage.getItem('xlets-theme');
+        } catch (e) {
+          t = null;
+        }
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        d.dataset.theme = t;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script src="../scripts/main.ts"></script>
+  </body>
+</html>

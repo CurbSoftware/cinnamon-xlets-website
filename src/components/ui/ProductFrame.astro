@@ -1,0 +1,80 @@
+---
+// Product photography frame: hairline border, mint edge light catching the
+// top, graphite shadow. Optional slight perspective (1 to 2 degrees, brief
+// section 5). Mobile styles should drop the perspective class (phase 2).
+interface Props {
+  perspective?: boolean;
+  caption?: string;
+  class?: string;
+}
+
+const { perspective = false, caption, class: className } = Astro.props;
+---
+
+<figure class:list={['product-frame', { 'product-frame--perspective': perspective }, className]}>
+  <div class="product-frame__shell">
+    <slot />
+  </div>
+  {
+    caption && (
+      <figcaption class="product-frame__caption">
+        <span>{caption}</span>
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .product-frame {
+    position: relative;
+    margin: 0;
+  }
+
+  .product-frame__shell {
+    position: relative;
+    border: var(--hairline-width) solid var(--hairline);
+    background: oklch(var(--card));
+    box-shadow: var(--shadow-frame);
+    /* mint reflection on framed screenshots */
+    overflow: hidden;
+  }
+
+  /* Mint edge light catching the top edge */
+  .product-frame__shell::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      oklch(var(--primary) / 0.7),
+      transparent
+    );
+    z-index: 1;
+  }
+
+  .product-frame--perspective .product-frame__shell {
+    transform: perspective(1200px) rotateX(1.4deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-frame--perspective .product-frame__shell {
+      transform: none;
+    }
+  }
+
+  .product-frame__caption {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  :global(img) {
+    width: 100%;
+    height: auto;
+  }
+</style>

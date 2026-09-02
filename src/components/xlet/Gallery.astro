@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import Reveal from '../ui/Reveal.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import type { ImageMetadata } from 'astro';
+
+// Gallery: full desk shot (when present) and the config shot, large.
+interface Props {
+  desk?: ImageMetadata;
+  configShot: ImageMetadata;
+  name: string;
+}
+
+const { desk, configShot, name } = Astro.props;
+---
+
+<section class="xlet-gallery" aria-labelledby="xlet-gallery-heading">
+  <Eyebrow label="Gallery" />
+  <h2 id="xlet-gallery-heading" class="visually-hidden">Screenshots</h2>
+  <div class="xlet-gallery__grid">
+    {
+      desk && (
+        <Reveal class="xlet-gallery__item xlet-gallery__item--wide">
+          <Image
+            src={desk}
+            alt={`${name} running on a full desktop`}
+            widths={[1600, 1200, 900]}
+            sizes="90vw"
+            loading="lazy"
+          />
+        </Reveal>
+      )
+    }
+    <Reveal class="xlet-gallery__item" delay={desk ? 60 : 0}>
+      <Image
+        src={configShot}
+        alt={`${name} settings window`}
+        widths={[1200, 900, 600]}
+        sizes="90vw"
+        loading="lazy"
+      />
+    </Reveal>
+  </div>
+</section>

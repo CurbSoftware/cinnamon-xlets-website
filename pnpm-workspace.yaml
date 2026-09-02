@@ -1,0 +1,7 @@
+# pnpm settings (pnpm 11 reads these here, not from package.json).
+# Native build scripts needed by dev tooling: esbuild (vitest/astro),
+# workerd (wrangler), sharp (image service, og generation).
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

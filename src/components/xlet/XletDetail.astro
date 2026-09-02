@@ -1,0 +1,57 @@
+---
+import { getEntry, render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import XletPage from './XletPage.astro';
+import { deriveInstall } from '../../lib/xlets';
+import { SITE } from '../../consts';
+
+// Shared wrapper for the five explicit /xlets/<slug> pages. Each page file
+// owns its per-xlet narrative components and forwards them through the
+// 'settings' named slot (a SettingsWindow built from the real
+// settings-schema.json labels). Keep shared logic here, not in page files.
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const entry = await getEntry('xlets', slug);
+if (!entry) throw new Error(`unknown xlet slug: ${slug}`);
+const { data } = entry;
+const { Content } = await render(entry);
+
+const og = await getImage({ src: data.shot, width: 1200, format: 'webp' });
+const pageURL = new URL(`/xlets/${slug}/`, SITE.url).href;
+const install = deriveInstall(data.uuid, data.kind);
+
+// JSON-LD SoftwareApplication, truthful fields only (spec: detail pages).
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: data.name,
+  description: data.summary,
+  url: pageURL,
+  image: new URL(og.src, SITE.url).href,
+  softwareVersion: data.version,
+  applicationCategory: 'Utilities',
+  operatingSystem: 'Linux',
+  license: 'https://spdx.org/licenses/GPL-2.0-or-later.html',
+  author: { '@type': 'Organization', name: 'CurbSoftware', url: 'https://curbsoftware.com' },
+  downloadUrl: install.zipUrl,
+  codeRepository: data.repo,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+
+<BaseLayout
+  title={`${data.name}: a Cinnamon ${data.kind} for Linux Mint`}
+  description={data.summary}
+  canonicalPath={`/xlets/${slug}/`}
+  ogImage={og.src}
+>
+  <XletPage entry={entry}>
+    <Content />
+    <slot name="settings" slot="settings" />
+  </XletPage>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</BaseLayout>

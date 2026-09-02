@@ -1,0 +1,48 @@
+---
+import Eyebrow from '../../../ui/Eyebrow.astro';
+import Reveal from '../../../ui/Reveal.astro';
+import SettingsWindow from '../../../ui/SettingsWindow.astro';
+import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
+
+// In Panel Workspace Name settings showcase: fragment rebuilt from the real
+// settings-schema.json labels and defaults. Static CSS only.
+const rows: SettingsRow[] = [
+  { section: 'Display' },
+  { label: 'Workspace button labels', type: 'select', value: 'Number + Name' },
+  { label: 'Maximum width of each workspace name', type: 'entry', value: '140 px' },
+  { label: 'Scroll wheel behavior', type: 'select', value: 'Disabled' },
+  { section: 'Workspace management' },
+  { label: 'Allow adding, removing and renaming workspaces', type: 'switch', on: true },
+  { label: 'Show an add button after workspace names', type: 'switch', on: true, hint: 'Needs workspace editing' },
+  { label: 'Confirm before removing a named workspace', type: 'switch', on: true, hint: 'Needs workspace editing' },
+];
+---
+
+<section class="wn-settings" aria-labelledby="wn-settings-heading">
+  <Eyebrow label="Settings" />
+  <h2 id="wn-settings-heading" class="wn-settings__heading">Settings, straight from the schema</h2>
+  <Reveal class="wn-settings__window">
+    <SettingsWindow title="In Panel Workspace Name" rows={rows} />
+    <p class="wn-settings__note">Fragment of the real settings window. Labels and defaults come from settings-schema.json.</p>
+  </Reveal>
+</section>
+
+<style>
+  .wn-settings {
+    margin-top: var(--space-9);
+  }
+
+  .wn-settings__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-5);
+  }
+
+  .wn-settings__note {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: oklch(var(--muted-foreground));
+    max-width: 40ch;
+  }
+</style>

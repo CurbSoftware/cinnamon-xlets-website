@@ -1,0 +1,60 @@
+---
+// Xlet index (brief 4.3): five full-width rows, never a card grid. The whole
+// row is one anchor to the detail page; hovering outlines it like the
+// products outline the active workspace tile. Each row carries its xlet's
+// accent hue via --xlet-hue (numeral, hover glow).
+import { Image } from 'astro:assets';
+import MonoChip from '../../ui/MonoChip.astro';
+import Eyebrow from '../../ui/Eyebrow.astro';
+import Reveal from '../../ui/Reveal.astro';
+import type { XletEntry } from '../../../lib/xlets';
+
+interface Props {
+  xlets: XletEntry[];
+}
+
+const { xlets } = Astro.props;
+---
+
+<section id="xlets" class="xindex" aria-label="The five xlets">
+  <div class="xindex__head">
+    <Eyebrow label="The set" />
+  </div>
+
+  <ul class="xindex__list" role="list">
+    {
+      xlets.map((entry, i) => (
+        <li class="xindex__item">
+          <Reveal as="div" delay={i * 70} class="xindex__reveal">
+            <a
+              class="xrow"
+              href={`/xlets/${entry.id}/`}
+              style={`--xlet-hue:${entry.data.accentHue}`}
+            >
+              <span class="xrow__numeral" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span class="xrow__body">
+                <h2 class="xrow__name">{entry.data.name}</h2>
+                <span class="xrow__tagline">{entry.data.tagline}</span>
+                <span class="xrow__meta">
+                  <MonoChip label={entry.data.kind} />
+                  <span class="xrow__version">V{entry.data.version} · GPL-2.0+</span>
+                </span>
+              </span>
+              <span class="xrow__shot">
+                <Image
+                  src={entry.data.shot}
+                  alt={`${entry.data.name} ${entry.data.kind} on a Cinnamon desktop`}
+                  width={800}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </span>
+            </a>
+          </Reveal>
+        </li>
+      ))
+    }
+  </ul>
+</section>

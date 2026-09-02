@@ -1,0 +1,349 @@
+---
+import Eyebrow from '../../../ui/Eyebrow.astro';
+import Reveal from '../../../ui/Reveal.astro';
+import SettingsWindow from '../../../ui/SettingsWindow.astro';
+import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
+import MonoChip from '../../../ui/MonoChip.astro';
+
+// Panel Profiles settings showcase, two sections.
+// 1. The profile story: named profile rows with kind chips and a modified
+//    dot, plus the transactional restore narrative as three mono steps and
+//    a red-then-green micro state strip (snapshot -> apply -> verified).
+// 2. A settings window fragment rebuilt from the real settings-schema.json
+//    labels and defaults. State colors are the shared --state-danger /
+//    --state-ok tokens from tokens.css.
+const rows: SettingsRow[] = [
+  { section: 'Profiles' },
+  { label: 'Manage saved profiles', type: 'button', value: 'Open', hint: 'Rename, duplicate or delete panel profiles' },
+  { label: 'Displays and active profile', type: 'entry', value: '2 connected / 2 expected' },
+  { section: 'Restore' },
+  { label: 'Stabilization delay', type: 'entry', value: '2 s', hint: 'Pause after displays settle' },
+  { label: 'Display wait timeout', type: 'entry', value: '60 s', hint: 'Wait for missing displays before giving up' },
+  { section: 'Notifications' },
+  { label: 'Show successful restore notifications', type: 'switch', on: true },
+  { label: 'Show warning and error notifications', type: 'switch', on: true },
+  { section: 'Advanced' },
+  { label: 'Enable debug logging', type: 'switch', on: false, hint: 'Writes to ~/.xsession-errors' },
+];
+---
+
+<section class="pp-flow" aria-labelledby="pp-flow-heading">
+  <Eyebrow label="How a restore runs" />
+  <h2 id="pp-flow-heading" class="pp-flow__heading">Save it, break it, restore it</h2>
+  <p class="pp-flow__lede">
+    The menu opens straight into your profiles. The active one sits bold with
+    a check; when the live layout drifts from it, the row gains a Modified
+    tag and the menu offers an Update.
+  </p>
+
+  <Reveal>
+    <ul class="pp-profiles" aria-label="Saved profiles">
+      <li class="pp-profile pp-profile--active">
+        <span class="pp-profile__check" aria-hidden="true"></span>
+        <span class="pp-profile__name">CODING DUAL</span>
+        <span class="pp-profile__tags">
+          <span class="pp-tag pp-tag--active">Active</span>
+          <MonoChip label="Panel" />
+        </span>
+      </li>
+      <li class="pp-profile">
+        <span class="pp-profile__check" aria-hidden="true"></span>
+        <span class="pp-profile__name">WRITING SINGLE</span>
+        <span class="pp-profile__tags">
+          <span class="pp-tag pp-tag--modified"><i aria-hidden="true"></i>Modified</span>
+          <MonoChip label="Panel" />
+        </span>
+      </li>
+      <li class="pp-profile">
+        <span class="pp-profile__check" aria-hidden="true"></span>
+        <span class="pp-profile__name">VM LAB</span>
+        <span class="pp-profile__tags">
+          <MonoChip label="Panel + desklets" />
+        </span>
+      </li>
+    </ul>
+  </Reveal>
+
+  <Reveal class="pp-transaction" delay={80}>
+    <ol class="pp-steps">
+      <li class="pp-step">
+        <span class="pp-step__numeral" aria-hidden="true">01</span>
+        <span class="pp-step__title">Apply</span>
+        <span class="pp-step__text">The profile writes its saved layout to Cinnamon. Nothing happens until you click.</span>
+      </li>
+      <li class="pp-step__arrow" aria-hidden="true">-&gt;</li>
+      <li class="pp-step">
+        <span class="pp-step__numeral" aria-hidden="true">02</span>
+        <span class="pp-step__title">Verify</span>
+        <span class="pp-step__text">The result is checked against what the profile expects, panel by panel.</span>
+      </li>
+      <li class="pp-step__arrow" aria-hidden="true">-&gt;</li>
+      <li class="pp-step">
+        <span class="pp-step__numeral" aria-hidden="true">03</span>
+        <span class="pp-step__title">Rollback if needed</span>
+        <span class="pp-step__text">A snapshot is taken first. A failed load undoes itself, back to where you were.</span>
+      </li>
+    </ol>
+
+    <div class="pp-state" role="img" aria-label="Restore state strip: snapshot written, applying, verified exact">
+      <span class="pp-state__bar">
+        <i class="pp-state__seg pp-state__seg--snapshot"></i>
+        <i class="pp-state__seg pp-state__seg--apply"></i>
+        <i class="pp-state__seg pp-state__seg--ok"></i>
+      </span>
+      <span class="pp-state__labels" aria-hidden="true">
+        <span>Snapshot written</span>
+        <span>Applying</span>
+        <span class="pp-state__ok">Verified exact</span>
+      </span>
+    </div>
+    <p class="pp-state__fail" role="img" aria-label="If verification fails, the load is undone automatically, back to the snapshot">
+      <i class="pp-state__dot" aria-hidden="true"></i>
+      If verify fails: automatic undo, back to the snapshot.
+    </p>
+  </Reveal>
+</section>
+
+<section class="pp-settings" aria-labelledby="pp-settings-heading">
+  <Eyebrow label="Settings" />
+  <h2 id="pp-settings-heading" class="pp-settings__heading">Settings, straight from the schema</h2>
+  <Reveal class="pp-settings__window">
+    <SettingsWindow title="Panel Profiles" rows={rows} />
+    <p class="pp-settings__note">Fragment of the real settings window. Labels and defaults come from settings-schema.json.</p>
+  </Reveal>
+</section>
+
+<style>
+  .pp-flow {
+    margin-top: var(--space-9);
+  }
+
+  .pp-flow__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-3);
+  }
+
+  .pp-flow__lede {
+    max-width: 52ch;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Profile rows: flat hairline rows, hover outlined like a workspace tile */
+  .pp-profiles {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+  }
+
+  .pp-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-2);
+    border-top: var(--hairline-width) solid var(--rule);
+    outline: var(--hairline-width) solid transparent;
+    outline-offset: -1px;
+  }
+
+  .pp-profile:last-child {
+    border-bottom: var(--hairline-width) solid var(--rule);
+  }
+
+  .pp-profile:hover {
+    outline-color: oklch(var(--xlet-accent) / 0.5);
+    box-shadow: 0 0 24px oklch(var(--xlet-accent) / 0.08);
+  }
+
+  .pp-profile__check {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    flex: none;
+    background: oklch(var(--xlet-accent));
+  }
+
+  /* Reserve the check column on every row so names align; only the active
+     row paints it, like the applet menu's check on the active profile */
+  .pp-profile:not(.pp-profile--active) .pp-profile__check {
+    visibility: hidden;
+  }
+
+  .pp-profile__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .pp-profile--active .pp-profile__name {
+    font-weight: 700;
+  }
+
+  .pp-profile__tags {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .pp-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .pp-tag--active {
+    color: oklch(var(--xlet-accent));
+  }
+
+  .pp-tag--modified {
+    color: oklch(var(--muted-foreground));
+  }
+
+  .pp-tag--modified i {
+    inline-size: 0.375rem;
+    block-size: 0.375rem;
+    background: oklch(var(--xlet-accent));
+  }
+
+  /* Transaction steps */
+  .pp-transaction {
+    margin-top: var(--space-6);
+  }
+
+  .pp-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .pp-step {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+    padding-top: var(--space-2);
+    border-top: 2px solid oklch(var(--xlet-accent));
+  }
+
+  .pp-step__numeral {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    color: oklch(var(--xlet-accent));
+  }
+
+  .pp-step__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .pp-step__text {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: oklch(var(--muted-foreground));
+  }
+
+  .pp-step__arrow {
+    padding-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Micro state strip: neutral snapshot, red apply, green verified */
+  .pp-state {
+    margin-top: var(--space-5);
+  }
+
+  .pp-state__bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 2px;
+    block-size: 5px;
+    background: var(--rule);
+  }
+
+  .pp-state__seg--snapshot {
+    background: oklch(var(--muted-foreground) / 0.55);
+  }
+
+  .pp-state__seg--apply {
+    background: oklch(var(--state-danger));
+  }
+
+  .pp-state__seg--ok {
+    background: oklch(var(--state-ok));
+  }
+
+  .pp-state__labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 2px;
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .pp-state__ok {
+    color: oklch(var(--state-ok));
+  }
+
+  .pp-state__fail {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .pp-state__fail i {
+    inline-size: 0.375rem;
+    block-size: 0.375rem;
+    background: oklch(var(--state-danger));
+  }
+
+  @media (max-width: 48rem) {
+    .pp-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .pp-step__arrow {
+      display: none;
+    }
+  }
+
+  .pp-settings {
+    margin-top: var(--space-9);
+  }
+
+  .pp-settings__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-5);
+  }
+
+  .pp-settings__note {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: oklch(var(--muted-foreground));
+    max-width: 40ch;
+  }
+</style>

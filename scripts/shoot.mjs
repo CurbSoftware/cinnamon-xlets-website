@@ -1,0 +1,95 @@
+// Capture screenshots of every route for the critic loop.
+// Usage:
+//   node scripts/shoot.mjs                      # shoot local preview on :4399
+//   node scripts/shoot.mjs --base http://localhost:4321
+//   node scripts/shoot.mjs --refs               # shoot reference sites instead
+//   node scripts/shoot.mjs --routes /,/install/ # shoot only some routes
+// Output: shots/{theme}/{viewport}/{slug}.png  and shots/refs/{site}.png
+import { chromium } from '@playwright/test';
+import { mkdirSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+const ROUTES = [
+  ['home', '/'],
+  ['world-clock', '/xlets/world-clock/'],
+  ['color-timer-clock', '/xlets/color-timer-clock/'],
+  ['workspace-grid', '/xlets/workspace-grid/'],
+  ['workspace-names', '/xlets/workspace-names/'],
+  ['panel-profiles', '/xlets/panel-profiles/'],
+  ['install', '/install/'],
+  ['404', '/404.html'],
+];
+
+const VIEWPORTS = [
+  ['desktop', { width: 1440, height: 900 }],
+  ['mobile', { width: 390, height: 844 }],
+];
+
+const THEMES = ['dark', 'light'];
+
+const REFS = [
+  ['buttons', 'https://buttons.curbsoftware.com/'],
+  ['curbsoftware', 'https://curbsoftware.com/'],
+  ['tailwindcss', 'https://tailwindcss.com/'],
+];
+
+const args = process.argv.slice(2);
+const refsMode = args.includes('--refs');
+const baseIdx = args.indexOf('--base');
+const base = refsMode ? '' : baseIdx >= 0 ? args[baseIdx + 1] : 'http://localhost:4399';
+const routesIdx = args.indexOf('--routes');
+const only = routesIdx >= 0 ? new Set(args[routesIdx + 1].split(',')) : null;
+
+mkdirSync(resolve(root, 'shots'), { recursive: true });
+
+const browser = await chromium.launch();
+
+async function shoot(url, out, viewport, theme) {
+  const page = await browser.newPage({
+    viewport,
+    deviceScaleFactor: 2, // crisp for the vision critic
+  });
+  try {
+    await page.addInitScript(
+      (t) => {
+        try { localStorage.setItem('xlets-theme', t); } catch {}
+      },
+      theme
+    );
+    await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(900); // reveal animations settle
+    await page.screenshot({ path: out, fullPage: true });
+    console.log(`shot ${out}`);
+  } catch (err) {
+    console.error(`FAIL ${url}: ${err.message}`);
+    process.exitCode = 1;
+  } finally {
+    await page.close();
+  }
+}
+
+if (refsMode) {
+  mkdirSync(resolve(root, 'shots/refs'), { recursive: true });
+  for (const [name, url] of REFS) {
+    for (const [vpName, viewport] of VIEWPORTS) {
+      await shoot(url, resolve(root, `shots/refs/${name}-${vpName}.png`), viewport, 'dark');
+    }
+  }
+} else {
+  for (const theme of THEMES) {
+    for (const [vpName, viewport] of VIEWPORTS) {
+      const dir = resolve(root, `shots/${theme}/${vpName}`);
+      mkdirSync(dir, { recursive: true });
+      for (const [slug, path] of ROUTES) {
+        if (only && !only.has(slug)) continue;
+        await shoot(base + path, resolve(dir, `${slug}.png`), viewport, theme);
+      }
+    }
+  }
+}
+
+await browser.close();

@@ -1,0 +1,165 @@
+---
+import { SITE, LINKS } from '../../consts';
+import ThemeToggle from './ThemeToggle.astro';
+
+// Panel-strip nav (brief section 7): the Cinnamon top bar is the site nav.
+// Translucent blur surface after 24px of scroll; the is-condensed class is
+// toggled by initHeader in src/scripts/main.ts. No rounded glass pill.
+const { pathname } = Astro.url;
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+const links = [
+  { href: '/#xlets', label: 'Xlets' },
+  { href: '/install/', label: 'Install' },
+];
+---
+
+<header class="site-header" data-nav>
+  <nav class="site-header__inner" aria-label="Primary">
+    <a class="site-header__wordmark" href="/">
+      <svg class="site-header__glyph" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+        <rect x="1" y="1" width="12" height="12" fill="none" stroke="oklch(var(--primary))" stroke-width="1.5"></rect>
+        <rect x="4" y="4" width="6" height="6" fill="none" stroke="oklch(var(--primary))" stroke-opacity="0.45" stroke-width="1"></rect>
+      </svg>
+      <span class="site-header__name">{SITE.name}</span>
+      <span class="mono-chip site-header__org" aria-label="by CurbSoftware">CURBSOFTWARE</span>
+    </a>
+
+    <div class="site-header__links">
+      {links.map((link) => (
+        <a
+          class="site-header__link"
+          href={link.href}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+      <a class="site-header__link site-header__link--github" href={LINKS.org} rel="noopener">
+        <svg
+          class="site-header__gh-icon"
+          width="13"
+          height="13"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+        >
+          <path
+            fill="currentColor"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+          ></path>
+        </svg>
+        <span class="site-header__link-label">GitHub</span>
+      </a>
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: var(--hairline-width) solid var(--rule);
+    background: oklch(var(--background) / 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
+  }
+
+  /* Condensed after 24px of scroll: panel autohiding into focus */
+  .site-header.is-condensed {
+    background: oklch(var(--background) / 0.94);
+    border-color: var(--hairline);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    max-width: var(--container);
+    margin-inline: auto;
+    padding: var(--space-3) var(--gutter);
+  }
+
+  .site-header__wordmark {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
+  }
+
+  .site-header__org {
+    font-size: 0.5625rem;
+  }
+
+  .site-header__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  .site-header__link {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: oklch(var(--muted-foreground));
+    padding-block: var(--space-1);
+    border-bottom: 2px solid transparent;
+  }
+
+  .site-header__link:hover {
+    color: oklch(var(--foreground));
+  }
+
+  .site-header__link[aria-current='page'] {
+    color: oklch(var(--primary));
+    border-bottom-color: oklch(var(--primary));
+  }
+
+  /* The GitHub mark only stands in for the label on the narrowest widths;
+     the visible label stays on wide screens. */
+  .site-header__gh-icon {
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .site-header__org {
+      display: none;
+    }
+    .site-header__inner {
+      gap: var(--space-3);
+    }
+    .site-header__links {
+      gap: var(--space-3);
+    }
+  }
+
+  /* Narrow phones: the links plus the theme toggle must fit 320px. GitHub
+     goes icon-only (its accessible name stays "GitHub"), the toggle keeps
+     its icon and aria-label. */
+  @media (max-width: 430px) {
+    .site-header__link--github {
+      display: inline-flex;
+      align-items: center;
+      padding-block: 0.125rem;
+      border-bottom-width: 1px;
+    }
+
+    .site-header__link--github .site-header__link-label {
+      display: none;
+    }
+
+    .site-header__gh-icon {
+      display: block;
+    }
+  }
+</style>

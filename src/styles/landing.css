@@ -1,0 +1,11 @@
+/* ---------------------------------------------------------------------------
+   xlets: landing aggregator. Page-section styles live in landing/ and are
+   owned by the per-page build agents:
+     landing/home.css    home sections (hero, ticker, index, editorial, finale)
+     landing/xlet.css    xlet detail page sections
+     landing/install.css install page
+--------------------------------------------------------------------------- */
+
+@import './landing/home.css';
+@import './landing/xlet.css';
+@import './landing/install.css';

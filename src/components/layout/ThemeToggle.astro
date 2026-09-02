@@ -1,0 +1,58 @@
+---
+// Light/dark toggle. Markup only; the behavior lives in initThemeToggle in
+// src/scripts/main.ts so the whole site ships exactly one script file.
+// aria-pressed: true when the current theme is dark.
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-pressed="false"
+  aria-label="Toggle dark theme"
+>
+  <svg
+    class="theme-toggle__icon"
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    aria-hidden="true"
+    data-theme-icon
+  >
+    <circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+  </svg>
+  <span class="theme-toggle__label" data-theme-label>Theme</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+    background: none;
+    border: var(--hairline-width) solid var(--rule);
+    padding: var(--space-1) var(--space-3);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    color: oklch(var(--primary));
+    border-color: var(--hairline-strong);
+  }
+
+  /* Narrow phones: icon only, the aria-label carries the name */
+  @media (max-width: 430px) {
+    .theme-toggle {
+      padding-inline: var(--space-2);
+    }
+
+    .theme-toggle__label {
+      display: none;
+    }
+  }
+</style>

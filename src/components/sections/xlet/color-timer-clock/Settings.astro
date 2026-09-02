@@ -1,0 +1,320 @@
+---
+import Eyebrow from '../../../ui/Eyebrow.astro';
+import Reveal from '../../../ui/Reveal.astro';
+import SettingsWindow from '../../../ui/SettingsWindow.astro';
+import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
+
+// Color Timer Clock settings showcase. Rows are the real labels, defaults
+// and dependency notes from cinnamon-color-timer-clock-desklet@curbsoftware
+// settings-schema.json.
+
+const rows: SettingsRow[] = [
+  { section: 'Cards', label: 'Show clock card', type: 'switch', on: true },
+  { label: 'Show timer card', type: 'switch', on: true },
+  { label: 'Show chronometer card', type: 'switch', on: true },
+  { section: 'Clock card', label: 'Smooth color transitions', type: 'switch', on: true, hint: 'Blend gradually between schedule stops; off holds each color until the next stop' },
+  { section: 'Timer card', label: 'Timer minutes', type: 'entry', value: '5 min', hint: 'The default duration the timer restarts from' },
+  { label: 'Show a notification when the timer finishes', type: 'switch', on: false },
+  { section: 'Chronometer card', label: 'Show hundredths of a second', type: 'switch', on: false, hint: 'Adds a .ss fraction while the chronometer runs' },
+  { section: 'Display', label: 'Time format (strftime)', type: 'entry', value: '%H:%M:%S' },
+  { label: 'Desklet width', type: 'entry', value: '840 px', hint: 'Cards share the width and wrap onto more rows when needed' },
+  { section: 'Color schedules', label: 'One list of time and color stops per card', type: 'button', value: 'Reset all schedules to defaults', hint: 'Restores the clock, timer and chronometer schedules to their default stops' },
+];
+
+// The schedule demo: one clock-card day. Stop positions are proportional
+// to real times (06:00 to 21:00 across 0 to 100 percent). The hex values
+// are literal product data, schedule stops a user might set, so they stay
+// raw on purpose; this includes the one place amber is allowed on the site.
+const stops = [
+  { time: '06:00', name: 'Deep blue', hex: '#283593', pos: 0 },
+  { time: '09:00', name: 'Paper', hex: '#f5f0e2', pos: 20 },
+  { time: '12:30', name: 'Amber', hex: '#ec9f00', pos: 43.33 },
+  { time: '17:00', name: 'Copper', hex: '#c05a21', pos: 73.33 },
+  { time: '21:00', name: 'Ink', hex: '#201d24', pos: 100 },
+];
+// Now = 15:42, which is 64.67 percent along the day. Between the 12:30
+// amber and 17:00 copper stops at fraction 0.711, the piecewise-linear RGB
+// blend of the two is #cd6e17.
+const now = { time: '15:42', pos: 64.67, hex: '#cd6e17' };
+const next = stops[3];
+const gradient = `linear-gradient(90deg, ${stops.map((s) => `${s.hex} ${s.pos}%`).join(', ')})`;
+---
+
+<section class="ct-settings" aria-labelledby="ct-settings-heading">
+  <Eyebrow label="Settings" />
+  <h2 id="ct-settings-heading" class="ct-settings__heading">The schedule is the interface</h2>
+  <p class="ct-settings__lede">
+    Every card has its own list of time and color stops, edited in plain rows. These settings are the real ones; the band below is a schedule you might set on the clock card.
+  </p>
+
+  <Reveal class="ct-settings__window">
+    <SettingsWindow title="Color Timer Clock Settings" rows={rows} />
+  </Reveal>
+
+  <Reveal class="ct-demo" delay={80}>
+    <div class="ct-demo__head">
+      <h3 class="ct-demo__sub">A day on the clock card</h3>
+      <p class="ct-demo__meta">Smooth ramp &middot; wraps over midnight</p>
+    </div>
+
+    <div
+      class="ct-track"
+      role="img"
+      aria-label={`Clock card color schedule from 06:00 to 21:00: deep blue at 06:00, paper at 09:00, amber at 12:30, copper at 17:00, ink at 21:00. Now is ${now.time}, between the amber and copper stops, so the card background blends to ${now.hex}.`}
+    >
+      <div class="ct-band" aria-hidden="true" style={`background: ${gradient}`}></div>
+      {
+        stops.map((s) => (
+          <span class="ct-tick" aria-hidden="true" style={`--pos: ${s.pos}%`} />
+        ))
+      }
+      <span class="ct-now" aria-hidden="true" style={`--pos: ${now.pos}%`}>
+        <span class="ct-now__flag">Now {now.time}</span>
+      </span>
+    </div>
+    <div class="ct-stops">
+      {
+        stops.map((s, i) => (
+          <span
+            class:list={['ct-stop', { 'ct-stop--first': i === 0, 'ct-stop--last': i === stops.length - 1 }]}
+            style={`--pos: ${s.pos}%`}
+          >
+            <span class="ct-stop__time">{s.time}</span>
+            <span class="ct-stop__name">{s.name}</span>
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="ct-demo__foot">
+      <div class="ct-card" style={`--card-bg: ${now.hex}`}>
+        <span class="ct-card__title">Clock</span>
+        <span class="ct-card__time">{now.time}</span>
+        <span class="ct-card__chip">
+          Next
+          <span class="ct-card__swatch" style={`--swatch: ${next.hex}`}></span>
+          {next.time}
+        </span>
+      </div>
+      <p class="ct-demo__note">
+        At {now.time} the card sits between the 12:30 amber and 17:00 copper stops, so its background is the blend of the two: {now.hex}. Text picks a readable shade for the background, and the Next chip previews the upcoming stop with its color sample.
+      </p>
+    </div>
+  </Reveal>
+</section>
+
+<style>
+  .ct-settings {
+    margin-top: var(--space-9);
+  }
+
+  .ct-settings__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-4);
+    max-width: 24ch;
+  }
+
+  .ct-settings__lede {
+    max-width: 52ch;
+    color: oklch(var(--muted-foreground));
+    margin-bottom: var(--space-6);
+  }
+
+  .ct-settings__window {
+    max-width: 40rem;
+  }
+
+  /* schedule timeline */
+  .ct-demo {
+    margin-top: var(--space-7);
+  }
+
+  .ct-demo__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-5);
+  }
+
+  .ct-demo__sub {
+    font-size: var(--text-xl);
+    margin: 0;
+  }
+
+  .ct-demo__meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .ct-track {
+    position: relative;
+    /* room for the now flag above the band */
+    padding-top: var(--space-7);
+  }
+
+  .ct-band {
+    block-size: 0.875rem;
+    border: var(--hairline-width) solid oklch(var(--foreground) / 0.35);
+  }
+
+  .ct-tick {
+    position: absolute;
+    top: calc(var(--space-7) + 0.875rem);
+    left: var(--pos);
+    transform: translateX(-50%);
+    block-size: 0.5rem;
+    inline-size: var(--hairline-width);
+    background: oklch(var(--foreground) / 0.35);
+  }
+
+  .ct-now {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .ct-now::after {
+    content: '';
+    position: absolute;
+    top: var(--space-5);
+    bottom: calc(-0.5rem);
+    inline-size: 2px;
+    background: oklch(var(--xlet-accent));
+  }
+
+  .ct-now__flag {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: var(--space-1) var(--space-2);
+    border: var(--hairline-width) solid var(--hairline-strong);
+    background: oklch(var(--card));
+    color: oklch(var(--xlet-accent));
+    white-space: nowrap;
+  }
+
+  .ct-stops {
+    position: relative;
+    block-size: 2.75rem;
+    margin-top: var(--space-1);
+  }
+
+  .ct-stop {
+    position: absolute;
+    top: 0;
+    left: var(--pos);
+    transform: translateX(-50%);
+    display: grid;
+    gap: var(--space-1);
+    justify-items: center;
+    white-space: nowrap;
+  }
+
+  .ct-stop--first {
+    transform: none;
+    justify-items: start;
+  }
+
+  .ct-stop--last {
+    transform: translateX(-100%);
+    justify-items: end;
+  }
+
+  .ct-stop__time {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .ct-stop__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* the card at now, in the product's own card grammar */
+  .ct-demo__foot {
+    margin-top: var(--space-6);
+    display: grid;
+    gap: var(--space-5);
+    align-items: center;
+  }
+
+  @media (min-width: 48rem) {
+    .ct-demo__foot {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    }
+  }
+
+  .ct-card {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    padding: var(--space-4);
+    background: var(--card-bg);
+    border: 1px solid #17141a;
+    box-shadow: var(--shadow-md);
+  }
+
+  .ct-card__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #17141a;
+  }
+
+  .ct-card__time {
+    font-family: var(--font-mono);
+    font-size: var(--text-4xl);
+    font-weight: 500;
+    line-height: 1;
+    color: #17141a;
+  }
+
+  .ct-card__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid #17141a;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #17141a;
+  }
+
+  /* 20 px double-ring color sample, the product's Next chip grammar */
+  .ct-card__swatch {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    background: var(--swatch);
+    border: 1px solid #17141a;
+    outline: 1px solid #17141a;
+    outline-offset: 2px;
+  }
+
+  .ct-demo__note {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: oklch(var(--muted-foreground));
+    max-width: 56ch;
+  }
+</style>

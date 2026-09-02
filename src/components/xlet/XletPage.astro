@@ -1,0 +1,179 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Eyebrow from '../ui/Eyebrow.astro';
+import MonoChip from '../ui/MonoChip.astro';
+import ProductFrame from '../ui/ProductFrame.astro';
+import CopyBlock from '../ui/CopyBlock.astro';
+import Reveal from '../ui/Reveal.astro';
+import FeatureIndex from './FeatureIndex.astro';
+import Gallery from './Gallery.astro';
+import NextXlet from './NextXlet.astro';
+import { deriveInstall, nextPrevIn, getXlets } from '../../lib/xlets';
+
+// Shared detail page template. Props: the collection entry; the markdown
+// body arrives as the default slot (the page renders <Content /> into it).
+// A blockquote anywhere in the body is styled as the pull-quote moment.
+// Phase 2 agents own the art direction in styles/landing/xlet.css; this
+// component fixes the section order, ids, and class names.
+interface Props {
+  entry: CollectionEntry<'xlets'>;
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const install = deriveInstall(data.uuid, data.kind);
+const all = await getXlets();
+const { prev, next } = nextPrevIn(all, entry.id);
+const numeral = String(Math.round((data.order - 100) / 10)).padStart(2, '0');
+const tab = (key: string) => `install-${entry.id}-${key}`;
+---
+
+<article class="xlet-page" style={`--xlet-hue: ${data.accentHue}`}>
+  <header class:list={['xlet-hero', { 'xlet-hero--band': data.heroBand }]}>
+    <div class="xlet-hero__copy">
+      <Eyebrow label={`${data.kind} · v${data.version} · GPL-2.0+`} />
+      <h1 class="xlet-hero__name" data-reveal>
+        <span class="xlet-hero__numeral" aria-hidden="true">{numeral}</span>
+        {data.name}
+      </h1>
+      <p class="xlet-hero__tagline" data-reveal>{data.tagline}</p>
+
+      <Reveal as="div" class="xlet-hero__meta" delay={80}>
+        <dl class="xlet-meta">
+          <div class="xlet-meta__row">
+            <dt>Version</dt>
+            <dd>{data.version}</dd>
+          </div>
+          <div class="xlet-meta__row">
+            <dt>Kind</dt>
+            <dd>{data.kind}</dd>
+          </div>
+          <div class="xlet-meta__row">
+            <dt>License</dt>
+            <dd>GPL-2.0-or-later</dd>
+          </div>
+          <div class="xlet-meta__row">
+            <dt>Repo</dt>
+            <dd><a href={data.repo} rel="noopener">{data.repo.replace('https://github.com/RobertAlexanderH/', 'RobertAlexanderH/')}</a></dd>
+          </div>
+          {
+            data.spicesUrl && (
+              <div class="xlet-meta__row">
+                <dt>Cinnamon Spices</dt>
+                <dd><a href={data.spicesUrl} rel="noopener">listed</a></dd>
+              </div>
+            )
+          }
+          {
+            data.derivedFrom && (
+              <div class="xlet-meta__row">
+                <dt>Derived from</dt>
+                <dd>
+                  <a href={data.derivedFrom.url} rel="noopener">{data.derivedFrom.name}</a>
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+      </Reveal>
+    </div>
+
+    {
+      /* Framed hero (the default): product photography treatment. The
+         band variant (heroBand frontmatter, workspace-names) renders the
+         shot as a full-bleed strip below this article instead. */
+      !data.heroBand && (
+        <div class="xlet-hero__media" data-reveal>
+          <ProductFrame perspective caption={`${data.name} on the desktop`}>
+            <Image
+              src={data.shot}
+              alt={`${data.name} ${data.kind} screenshot`}
+              widths={[1600, 1200, 900]}
+              sizes="(min-width: 76rem) 70vw, 100vw"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </ProductFrame>
+        </div>
+      )
+    }
+  </header>
+</article>
+
+{
+  /* Full-bleed band hero: extreme panel strips run edge to edge (brief
+     section 5 special case). This block sits OUTSIDE .xlet-page, directly
+     under the unpadded <main>, so a plain block image at width 100% spans
+     the layout viewport exactly: no abspos breakout, no 100vw, immune to
+     scrollbar overflow. Same trick class as workspace-names PanelBand,
+     minus the fixed-height geometry (the image reserves its own height). */
+  data.heroBand && (
+    <div class="xlet-bandhero" data-reveal>
+      <Image
+        class="xlet-bandhero__img"
+        src={data.shot}
+        alt={`${data.name} ${data.kind} screenshot`}
+        widths={[2560, 1920, 1280, 768]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <p class="xlet-bandhero__caption">{data.name} on the desktop</p>
+    </div>
+  )
+}
+
+<article class="xlet-page" style={`--xlet-hue: ${data.accentHue}`}>
+  <section class="xlet-why" aria-labelledby="xlet-why-heading">
+    <Eyebrow label="Why this exists" />
+    <h2 id="xlet-why-heading" class="visually-hidden">Why this exists</h2>
+    <div class="xlet-why__body" data-reveal>
+      <slot />
+    </div>
+    <p class="xlet-hero__chips">
+      <MonoChip label={data.kind} />
+      <MonoChip label={`v${data.version}`} />
+      <MonoChip label="GPL-2.0+" />
+    </p>
+  </section>
+
+  <FeatureIndex features={data.features} configShot={data.configShot} name={data.name} />
+
+  <slot name="settings" />
+
+  <Gallery desk={data.desk} configShot={data.configShot} name={data.name} />
+
+  {
+    /* Install: CSS-only radio tabs. No-JS story: the radios are real form
+       controls, arrow-key navigable, and :checked drives which panel shows,
+       so tab switching needs zero JavaScript. The copy buttons inside the
+       panels are progressive enhancement (see CopyBlock.astro). Commands
+       derive from uuid + kind via lib/xlets.ts, never from content. */
+  }
+  <section class="xlet-install" aria-labelledby="xlet-install-heading">
+    <Eyebrow label="Install" />
+    <h2 id="xlet-install-heading">Add it to Cinnamon</h2>
+    <p class="xlet-install__note">No root needed. Everything lands in your home directory. The <code>rm -rf</code> before each copy is the upgrade path; your settings live elsewhere and survive.</p>
+
+    <div class="install-tabs">
+      <input class="install-tabs__input" type="radio" name={tab('mode')} id={tab('zip')} checked />
+      <label class="install-tabs__tab" for={tab('zip')}>Release zip</label>
+      <input class="install-tabs__input" type="radio" name={tab('mode')} id={tab('git')} />
+      <label class="install-tabs__tab" for={tab('git')}>From git</label>
+
+      <div class="install-tabs__panels">
+        <div class="install-tabs__panel install-tabs__panel--zip">
+          <CopyBlock id={tab('zip-commands')} commands={install.commands.zip} label={`${data.name} release zip install commands`} />
+        </div>
+        <div class="install-tabs__panel install-tabs__panel--git">
+          <CopyBlock id={tab('git-commands')} commands={install.commands.git} label={`${data.name} git install commands`} />
+        </div>
+      </div>
+    </div>
+
+    <p class="xlet-install__reload">Restart Cinnamon (Alt-F2, type <code>r</code>, Enter), then add the {data.kind} from Cinnamon Settings.</p>
+  </section>
+
+  <NextXlet prev={prev} next={next} />
+</article>

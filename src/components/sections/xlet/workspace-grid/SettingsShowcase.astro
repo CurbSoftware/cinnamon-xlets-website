@@ -1,0 +1,221 @@
+---
+import Eyebrow from '../../../ui/Eyebrow.astro';
+import Reveal from '../../../ui/Reveal.astro';
+import SettingsWindow from '../../../ui/SettingsWindow.astro';
+import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
+
+// Workspace Grid settings showcase. Left: the tile grammar as a designed
+// specimen (outlined active tile, name tiles, a preview tile with live
+// window rectangles and app dots, the trailing add tile). Right: a settings
+// window fragment rebuilt from the real settings-schema.json labels and
+// defaults. Static CSS only, no JavaScript.
+const rows: SettingsRow[] = [
+  { section: 'Layout' },
+  { label: 'Grid layout mode', type: 'select', value: 'Auto (near-square)' },
+  { label: 'Rows (fixed layout)', type: 'entry', value: '2', hint: 'Fixed layout only' },
+  { label: 'Columns (fixed layout)', type: 'entry', value: '2', hint: 'Fixed layout only' },
+  { label: 'Workspace representation', type: 'select', value: 'Names' },
+  { section: 'Labels' },
+  { label: 'Prefix names with index (1-based)', type: 'switch', on: false },
+  { section: 'Workspace management' },
+  { label: 'Allow adding, removing and renaming workspaces', type: 'switch', on: true },
+  { label: 'Show a "+" tile to add a workspace', type: 'switch', on: true, hint: 'Needs workspace editing' },
+  { label: 'Confirm before removing a named workspace', type: 'switch', on: true, hint: 'Needs workspace editing' },
+  { section: 'Behavior' },
+  { label: 'Scroll wheel switches workspaces', type: 'select', value: 'Off' },
+];
+---
+
+<section class="wg-settings" aria-labelledby="wg-settings-heading">
+  <Eyebrow label="The tile grammar" />
+  <h2 id="wg-settings-heading" class="wg-settings__heading">Tiles, exactly as Cinnamon draws them</h2>
+
+  <div class="wg-settings__grid">
+    <Reveal as="figure" class="wg-specimen">
+      <ul class="wg-tiles" aria-label="Workspace Grid tile specimen">
+        <li class="wg-tile wg-tile--preview wg-tile--active">
+          <span class="wg-win wg-win--a" aria-hidden="true"></span>
+          <span class="wg-win wg-win--b" aria-hidden="true"></span>
+          <span class="wg-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="wg-tile__name">WEB</span>
+        </li>
+        <li class="wg-tile wg-tile--name">CODE</li>
+        <li class="wg-tile wg-tile--name">CHAT</li>
+        <li class="wg-tile wg-tile--name">ADMIN</li>
+        <li class="wg-tile wg-tile--preview">
+          <span class="wg-win wg-win--a wg-win--low" aria-hidden="true"></span>
+          <span class="wg-win wg-win--b wg-win--low" aria-hidden="true"></span>
+          <span class="wg-dots" aria-hidden="true"><i></i><i></i></span>
+          <span class="wg-tile__name">MAIL</span>
+        </li>
+        <li class="wg-tile wg-tile--add"><span aria-hidden="true">+</span><span class="visually-hidden">Add workspace tile</span></li>
+      </ul>
+      <figcaption class="wg-specimen__legend" aria-hidden="true">
+        <span>01 Active, outlined</span>
+        <span>02 Name tile</span>
+        <span>03 Preview tile</span>
+        <span>04 Add tile</span>
+      </figcaption>
+      <p class="wg-specimen__caption">
+        One specimen, both tile flavors: the outlined tile is the workspace you
+        are on, preview tiles shrink each monitor with its visible windows and
+        app dots, and the trailing + tile adds a workspace.
+      </p>
+    </Reveal>
+
+    <Reveal class="wg-settings__window" delay={80}>
+      <SettingsWindow title="Workspace Grid" rows={rows} />
+      <p class="wg-settings__note">Fragment of the real settings window. Labels and defaults come from settings-schema.json.</p>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .wg-settings {
+    margin-top: var(--space-9);
+  }
+
+  .wg-settings__heading {
+    font-size: var(--text-3xl);
+    margin: var(--space-3) 0 var(--space-5);
+  }
+
+  .wg-settings__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  @media (min-width: 64rem) {
+    .wg-settings__grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  /* Tile specimen: hairline gaps read as the desklet's own grid lines */
+  .wg-tiles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--hairline);
+    border: var(--hairline-width) solid var(--hairline-strong);
+  }
+
+  .wg-tile {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    background: oklch(var(--card));
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: oklch(var(--card-foreground) / 0.85);
+  }
+
+  .wg-tile:hover {
+    outline: 1px solid oklch(var(--xlet-accent) / 0.45);
+    outline-offset: -1px;
+  }
+
+  .wg-tile--active {
+    outline: 2px solid oklch(var(--xlet-accent));
+    outline-offset: -2px;
+    box-shadow: inset 0 0 24px oklch(var(--xlet-accent) / 0.1);
+  }
+
+  /* Preview tiles: tiny window rectangles plus a row of app dots */
+  .wg-tile--preview {
+    place-items: stretch;
+  }
+
+  .wg-win {
+    position: absolute;
+    border: var(--hairline-width) solid var(--hairline-strong);
+    background: oklch(var(--raised));
+  }
+
+  .wg-win--a {
+    left: 8%;
+    top: 12%;
+    width: 56%;
+    height: 36%;
+  }
+
+  .wg-win--b {
+    left: 34%;
+    top: 34%;
+    width: 42%;
+    height: 30%;
+  }
+
+  .wg-win--low {
+    opacity: 0.55;
+  }
+
+  .wg-dots {
+    position: absolute;
+    left: 8%;
+    bottom: 10%;
+    display: flex;
+    gap: 3px;
+  }
+
+  .wg-dots i {
+    inline-size: 5px;
+    block-size: 5px;
+    background: oklch(var(--xlet-accent) / 0.8);
+  }
+
+  .wg-tile__name {
+    position: absolute;
+    right: 7%;
+    bottom: 8%;
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .wg-tile--add {
+    background: transparent;
+    color: oklch(var(--muted-foreground));
+    font-size: var(--text-lg);
+  }
+
+  .wg-specimen__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(var(--xlet-accent));
+  }
+
+  .wg-specimen__caption {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: oklch(var(--muted-foreground));
+    max-width: 46ch;
+  }
+
+  .wg-settings__window {
+    min-width: 0;
+  }
+
+  .wg-settings__note {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: oklch(var(--muted-foreground));
+    max-width: 40ch;
+  }
+</style>

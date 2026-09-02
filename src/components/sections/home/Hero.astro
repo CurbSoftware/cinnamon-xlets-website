@@ -1,0 +1,34 @@
+---
+// Hero (brief 4.1): 96svh 12-column split. Left 5 cols: eyebrow, the
+// intentionally broken headline with "arranged." in mint, lede, actions.
+// Right 7 cols: the live micro-desktop.
+import Eyebrow from '../../ui/Eyebrow.astro';
+import Button from '../../ui/Button.astro';
+import Reveal from '../../ui/Reveal.astro';
+import DesktopComposition from './DesktopComposition.astro';
+---
+
+<section class="hero">
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <Eyebrow label="Linux Mint Cinnamon · Desklets and Applets" />
+      <h1 class="hero__title">
+        <span class="hero__line">Your desktop,</span>
+        <span class="hero__line hero__accent">arranged.</span>
+      </h1>
+      <Reveal as="p" class="hero__lede" delay={120}>
+        Five small tools that live where you work: world clocks that tick, a
+        workspace map, panel layouts you can save. Open source, no root, and
+        installed in about a minute.
+      </Reveal>
+      <Reveal as="div" class="hero__actions" delay={220}>
+        <Button href="/install/">Install the set</Button>
+        <Button href="/#xlets" variant="secondary">Browse the five</Button>
+      </Reveal>
+    </div>
+
+    <div class="hero__visual">
+      <DesktopComposition />
+    </div>
+  </div>
+</section>

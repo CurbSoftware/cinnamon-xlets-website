@@ -1,0 +1,32 @@
+---
+// Home: one continuous composition per the art direction brief, section 4.
+// Hero with the live micro-desktop, world-clock ticker, the five-row xlet
+// index (id="xlets" is the nav anchor), why-editorial, install overview,
+// spec strip, finale. Section components carry their own content; styles
+// live in styles/landing/home.css, motion in styles/motion.css.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/home/Hero.astro';
+import ClockTicker from '../components/sections/home/ClockTicker.astro';
+import XletIndex from '../components/sections/home/XletIndex.astro';
+import WhyThese from '../components/sections/home/WhyThese.astro';
+import InstallOverview from '../components/sections/home/InstallOverview.astro';
+import SpecStrip from '../components/sections/home/SpecStrip.astro';
+import FinalCTA from '../components/sections/home/FinalCTA.astro';
+import { getXlets } from '../lib/xlets';
+import { SITE } from '../consts';
+
+const xlets = await getXlets();
+---
+
+<BaseLayout
+  title={`${SITE.name}: desklets and applets for Linux Mint Cinnamon`}
+  description={SITE.description}
+>
+  <Hero />
+  <ClockTicker />
+  <XletIndex {xlets} />
+  <WhyThese />
+  <InstallOverview />
+  <SpecStrip {xlets} />
+  <FinalCTA />
+</BaseLayout>

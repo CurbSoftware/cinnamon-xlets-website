@@ -1,0 +1,78 @@
+---
+import { LINKS } from '../../consts';
+import { getXlets } from '../../lib/xlets';
+
+// Quiet technical appendix (brief section 7): strong rule, project line on
+// the left, every repo link on the right, mono microtype.
+const xlets = await getXlets();
+const repos = xlets.map((x) => ({ slug: x.id, name: x.data.name }));
+---
+
+<footer class="site-footer" id="footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__project">
+      <p class="site-footer__line">xlets · GPL-2.0-or-later · by CurbSoftware</p>
+      <p class="site-footer__line">
+        <a href={LINKS.monorepo} rel="noopener">monorepo</a>
+        <a href={LINKS.curbsoftware} rel="noopener">curbsoftware.com</a>
+        <a href={LINKS.buttons} rel="noopener">buttons.curbsoftware.com</a>
+      </p>
+    </div>
+    <nav class="site-footer__repos" aria-label="Repositories">
+      {repos.map((repo) => (
+        <a href={LINKS.repos[repo.slug as keyof typeof LINKS.repos]} rel="noopener">
+          {repo.name}
+        </a>
+      ))}
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 2px solid oklch(var(--foreground));
+    margin-top: var(--space-10);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-6);
+    max-width: var(--container);
+    margin-inline: auto;
+    padding: var(--space-7) var(--gutter);
+  }
+
+  .site-footer__line,
+  .site-footer__repos {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .site-footer__line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .site-footer__line a,
+  .site-footer__repos a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .site-footer__line a:hover,
+  .site-footer__repos a:hover {
+    color: oklch(var(--primary));
+  }
+
+  .site-footer__repos {
+    display: grid;
+    gap: var(--space-2);
+    text-align: right;
+  }
+</style>

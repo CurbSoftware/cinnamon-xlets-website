@@ -1,0 +1,51 @@
+---
+// Mono small-caps label with a rule that draws in from the left on reveal.
+// The rule takes the per-xlet accent when the page sets --xlet-hue, mint
+// otherwise (brief: per-xlet hue tints the eyebrow rule).
+interface Props {
+  label: string;
+  as?: 'p' | 'h2' | 'div';
+}
+
+const { label, as: Tag = 'p' } = Astro.props;
+---
+
+<Tag class="eyebrow" data-reveal>
+  <span class="eyebrow__rule" aria-hidden="true"></span>
+  <span class="eyebrow__label">{label}</span>
+</Tag>
+
+<style>
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .eyebrow__rule {
+    inline-size: clamp(2rem, 4vw, 3.5rem);
+    block-size: 2px;
+    background: oklch(var(--xlet-accent));
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .eyebrow.reveal-in .eyebrow__rule {
+    transform: scaleX(1);
+    transition: transform var(--dur-slow) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Instant under reduced motion (motion.css forces content visible; the
+     rule must land with it) */
+  @media (prefers-reduced-motion: reduce) {
+    .eyebrow__rule {
+      transform: scaleX(1);
+    }
+  }
+</style>

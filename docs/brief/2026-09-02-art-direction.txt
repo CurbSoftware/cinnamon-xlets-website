@@ -1,0 +1,307 @@
+# Xlets Website : Art Direction Brief
+
+**Do not make this look like a generic AI-generated landing page. Treat this
+like a real creative direction project with art direction, hierarchy, rhythm,
+spacing, visual narrative, and a unique concept.**
+
+Build the showcase for five Linux Mint Cinnamon desklets and applets
+(World Clock, Color Timer Clock, Workspace Grid, In Panel Workspace Name,
+Panel Profiles) as an award-worthy open-source product site that sits
+alongside curbsoftware.com and buttons.curbsoftware.com without imitating
+either.
+
+The finished site should feel:
+
+* art-directed
+* editorial
+* precise
+* quietly alive
+* premium
+* bespoke
+* gallery-like
+* tactile
+* minimal-but-not-empty
+* intentional
+* memorable
+
+This is not a SaaS funnel. No pricing, no testimonials, no fake counts, no
+logo strips, no newsletter capture, no invented statistics.
+
+The one reaction to design for:
+
+> This is beautifully made. These extensions look genuinely useful. I want
+> to install them.
+
+---
+
+# 1. CORE CREATIVE CONCEPT
+
+One idea carries the whole site:
+
+## The desk, running.
+
+These products ARE the desktop: workspace tiles, panel strips, clocks,
+color schedules, saved layouts. So the site is a Cinnamon desktop mid-use.
+Every visual device comes from the products themselves:
+
+* workspace raster (the faint desktop grid)
+* panel strip (the Cinnamon top bar becomes the site nav)
+* desklet cards (the card language: sharp, hairline-bordered, floating on
+  the desktop)
+* live time (world clocks tick, the color card ramps)
+* tile outlines (the active-workspace grammar: hover and focus outline
+  tiles in mint)
+
+Where curbsoftware is a highway at night and buttons is an editor at work,
+this site is a desktop being used: tiled, precise, quietly alive.
+
+Do not decorate with unrelated abstract spheres, glass blobs, random 3D
+ribbons, stock illustrations, or generic dashboard chrome. Derive
+everything from the xlets.
+
+# 2. COLOR SYSTEM
+
+Pinescale + mint. This is the anti-amber sibling: cool, green-tinted
+graphite surfaces with a single mint accent. Amber appears exactly once on
+the whole site: inside the Color Timer Clock schedule demo, as literal
+product data (a schedule stop color). That scarcity makes it read as truth,
+not brand.
+
+* Neutrals: green-tinted graphite (OKLCH hue around 168, near-zero chroma).
+  Dark theme background near 0.145 lightness; panels and raised surfaces
+  step up in 0.03 to 0.05 increments. Light theme: warm paper whites.
+* Accent mint: dark theme primary oklch(0.84 0.17 152); light theme
+  oklch(0.62 0.15 155). Mint is precious: active states, key rules, the
+  accent word in the hero, tile outlines. Never wash whole sections in it.
+* Per-xlet accent hues tint exactly three things on that xlet's surface:
+  the index numeral, the eyebrow rule, and the hover glow. World Clock
+  240 (sky), Color Timer Clock 75 (schedule amber), Workspace Grid 152
+  (mint), In Panel Workspace Name 300 (violet), Panel Profiles 25 (rose).
+  One hue per page. Never mixed.
+* Light AND dark themes ship. Time-of-day is literally what these products
+  are about; day and night mode is the concept, not a chore. Dark follows
+  system by default.
+
+Keep `--radius: 0` everywhere. Square corners, hairline rules, hard-edged
+controls. The family signature.
+
+# 3. TYPOGRAPHY
+
+Three fonts, all self-hosted variable, no external requests:
+
+* Display: Bricolage Grotesque at wide widths, 600 to 700. Oversized
+  editorial statements. Its slight quirk is the anti-generic signature.
+* Body and UI: Hanken Grotesk. Warm, highly legible.
+* Mono: Spline Sans Mono. Eyebrows, metadata, UUIDs, versions, install
+  commands, clock and timezone labels, index numerals.
+
+Three typographic modes:
+
+* Editorial display: huge, tight leading (0.86 to 0.94), slightly negative
+  tracking, confident weight, narrow measure. Hero around
+  clamp(4.5rem, 8.5vw, 9rem); section statements 48 to 80 px.
+* Interface: restrained, often mono, small uppercase metadata, tight
+  spacing. The desklet-card voice.
+* Reading copy: 55 to 70 characters per line, comfortable line height.
+  Body 15 to 18 px. Never tiny 9 to 11 px text for atmosphere.
+
+Use typography as layout: a section heading may occupy half the screen with
+no card and no image around it.
+
+# 4. HOME PAGE COMPOSITION
+
+One continuous designed composition, not stacked sections. Vary density on
+purpose: huge negative space here, layered UI there, an almost empty
+editorial statement next, then a full-bleed screenshot. Avoid the
+heading-paragraph-small-graphic repeating rhythm.
+
+Sections, in order:
+
+## 4.1 Hero, about 96svh, 12-column split
+
+Left 5 columns: mono eyebrow "LINUX MINT CINNAMON · DESKLETS AND APPLETS";
+headline broken intentionally:
+
+    Your desktop,
+
+    arranged.
+
+with "arranged." in mint; a short lede in the house voice; primary CTA
+"Install the set" to /install/; secondary "Browse the five" anchor.
+
+Right 7 columns: a live micro-desktop built in HTML and CSS from the
+products' own grammar. From back to front:
+
+* a faint workspace raster backdrop
+* a top panel strip carrying workspace name chips (the nav motif in
+  miniature)
+* a world-clock mini grid showing REAL times via Intl.DateTimeFormat for
+  Vancouver, London, Tokyo (static build-time fallback under JS-off)
+* one color-timer card whose background actually ramps between schedule
+  stops
+* a workspace grid with the active tile outlined in mint
+
+Pointer parallax at depths 1, 3, 6, 10 px equivalents. Barely conscious.
+The micro-desktop is the single wow element; keep it crisp enough to read.
+
+## 4.2 Ticker
+
+Immediately after the hero, a full-width mono strip, very slow marquee,
+paused under reduced motion:
+
+    VANCOUVER 09:41 · LONDON 17:41 · TOKYO 01:41 · UTC 16:41
+
+Mint separators. It reads as the world clock breathing.
+
+## 4.3 Xlet index
+
+Five full-width rows, never a card grid. Per row: oversized index numeral
+in that xlet's hue; name in display type; a DESKLET or APPLET mono chip;
+tagline; version and license meta in mono; a cropped screenshot sliver at
+the right edge that widens on hover. Hovering outlines the row like the
+products outline the active workspace tile: the products' own grammar.
+
+## 4.4 Why these exist
+
+Editorial measure, personal copy from the README origin stories (the
+second panel lost at boot, the color schedule as signal). One pull-quote
+scale moment. No invented claims.
+
+## 4.5 Install overview
+
+A short version of the flow with a link to /install/. Mono, factual,
+calm.
+
+## 4.6 Spec strip
+
+Product-spec line, not social proof:
+
+    OPEN SOURCE · GPL-2.0+ · 3 DESKLETS · 2 APPLETS · LINUX MINT CINNAMON · GITHUB
+
+## 4.7 Final CTA
+
+A genuine closing scene: large near-full-viewport statement, the
+micro-desktop's simplest form behind it (a tile, a clock, a panel strip in
+outline), primary action to /install/, secondary to GitHub. Small mono
+line: GPL-2.0+ · Open source · CurbSoftware.
+
+# 5. DETAIL PAGE TEMPLATE
+
+Shared layout so the five pages feel like one set, differentiated by
+content, story, and one accent hue.
+
+1. Hero: eyebrow (kind, version, license); huge name; tagline; meta rail
+   (version, license, kind, repo, spices when live, derived-from credit);
+   the hero screenshot framed like product photography: hairline frame,
+   mint edge light catching the top, graphite shadow, slight 1 to 2 degree
+   perspective, 60 to 70 vw. Never a small boxed image in empty space.
+2. Why this exists: the README origin story at editorial measure. Keep the
+   personal voice. One pull-quote scale moment.
+3. Feature story: 2 or 3 alternating compositions. Features typeset as a
+   mono-numbered editorial index beside the config screenshot, not
+   icon-plus-paragraph cards.
+4. Settings showcase: a re-created Cinnamon settings window fragment in
+   HTML (section headers, checkbox rows, combobox rows, dependency
+   labels) rendered from the real settings-schema labels. Truthful labels
+   only; this is the tactility moment.
+5. Gallery: full desk shot and config shot, large, edge-to-edge.
+6. Install: mono command block with working copy button; tabs for release
+   zip and git; commands derived from uuid and kind so all five pages
+   agree.
+7. Prev and next xlet strip with the set's index numerals; back to index.
+
+Special case: In Panel Workspace Name screenshots are extreme panel strips
+(487x85 master, 3840x2160 webp of a full panel). Treat the panel strip as
+a full-bleed horizontal band across the page, not a boxed image. Let it
+run edge to edge.
+
+# 6. INSTALL PAGE
+
+A quiet technical page. The general flow as numbered mono steps (01
+download the zip, 02 extract to ~/.local/share/cinnamon/..., 03 reload or
+re-enable, settings survive upgrades). Then a per-xlet command index, one
+row per xlet, each with its working copy button. Facts only. Every command
+verified against the monorepo READMEs.
+
+# 7. NAV AND FOOTER
+
+Nav: the Cinnamon panel strip is the nav. Left: wordmark "xlets" with a
+small tile glyph plus a mono chip CURBSOFTWARE. Right: Xlets (index
+anchor), Install, GitHub, theme toggle. Translucent blur surface after 24
+px of scroll, like a real panel autohiding into focus. No rounded glass
+pill.
+
+Footer: a quiet technical appendix. Strong horizontal rule. Left: project,
+GPL-2.0+, by CurbSoftware. Right: the five repo links, the monorepo,
+curbsoftware.com, buttons sibling. Mono microtype. Do not overdesign.
+
+# 8. MOTION DIRECTION
+
+Cinematic, slow, restrained, purposeful. Vanilla IntersectionObserver and
+CSS only; no libraries; no hydration.
+
+* Reveal: elements enter with a 12 px rise and opacity over 500 to 700 ms,
+  a 60 to 90 ms stagger between siblings.
+* Hero pointer parallax: four depth planes, 1 to 10 px, rAF-throttled,
+  disabled on touch and reduced motion.
+* Ticker: slow CSS marquee, 60s+ per loop.
+* Line-draw: section eyebrow rules draw from left when entering view.
+* Live clocks: minute-precision updates; the color card ramps on a real
+  interpolation, one transition per stop.
+* Everything visible with JS blocked. Everything instant under
+  prefers-reduced-motion: reduce. Motion is enhancement, never content.
+
+# 9. MATERIAL AND DEPTH
+
+Depth from realistic material behavior, not decoration: hairline borders
+one luminance step up, one soft graphite shadow, a faint mint reflection
+on framed screenshots, a site-wide grain at near-invisible opacity, tonal
+background shifts between chapters (deep graphite hero, slightly raised
+index, inverted-paper editorial moment if the rhythm needs it, deep
+finale). Screenshots stay truthful: frame them, light them, never repaint
+them.
+
+# 10. RESPONSIVE ART DIRECTION
+
+Recompose, do not shrink. Mobile hero: headline at strong but sane scale,
+micro-desktop below the copy with 2 or 3 elements only, others hidden.
+Index rows become full-bleed stacked bands with the numeral as a large
+background figure. Detail hero screenshots go full width, perspective off.
+Install steps stack vertically. No microscopic text or diagrams anywhere.
+
+# 11. ACCESSIBILITY
+
+WCAG AA minimum, 7:1 target for body text in both themes. Real anchors,
+strong focus states (the mint tile outline IS the focus ring), semantic
+headings, alt text on every screenshot, keyboard paths through tabs and
+copy buttons, 200% zoom usable, no hover-only information, full
+prefers-reduced-motion behavior.
+
+# 12. QUALITY BAR
+
+Before declaring any section done, ask:
+
+> Could this section belong unchanged on 100 other developer-tool
+> websites?
+
+If yes, recompose it. Each section needs its own reason for looking the
+way it does, derived from these products: tiles, panels, clocks, schedules,
+saved layouts. The visual system should be impossible to separate from the
+product concept.
+
+Aim for the polish of a 10000 to 20000 dollar agency microsite with the
+honesty, speed, and restraint of an open-source developer tool.
+
+# 13. DO NOT
+
+* no feature-card grids, bento layouts, or repeated bordered boxes
+* no generic AI-landing look (centered hero, gradient blob, three cards)
+* no rounded 16 to 32 px containers (square corners are the brand)
+* no em-dashes or emojis anywhere, in code, comments, or copy
+* no promo voice ("supercharge", "game-changing", "unlock")
+* no fake metrics, testimonials, or logo clouds
+* no external font or script requests
+* no framework JS, no animation libraries
+* no repainting product screenshots into something the xlets are not
+* no Mint logos or Mint trademark trade dress; "Linux Mint" nominative
+  only

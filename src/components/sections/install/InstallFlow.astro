@@ -1,0 +1,101 @@
+---
+// THE FLOW: four numbered mono steps on a hairline-connected vertical
+// track (brief section 6). The concrete example is the first xlet in the
+// ordered set; every command comes from deriveInstall, never hardcoded.
+import CopyBlock from '../../ui/CopyBlock.astro';
+import Eyebrow from '../../ui/Eyebrow.astro';
+import { deriveInstall, type XletEntry } from '../../../lib/xlets';
+
+interface Props {
+  entry: XletEntry;
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const plan = deriveInstall(data.uuid, data.kind);
+const settingsDir = `~/.config/cinnamon/spices/${data.uuid}`;
+const manager = data.kind === 'desklet' ? 'Desklets' : 'Applets';
+---
+
+<section class="install-flow" aria-labelledby="install-flow-heading">
+  <Eyebrow label="The flow" />
+  <h2 id="install-flow-heading">Four steps, one terminal</h2>
+  <p class="install-flow__intro" data-reveal>
+    The example below installs {data.name}. Every other xlet is the same dance
+    with a different uuid; the command index further down carries the exact
+    lines for each.
+  </p>
+
+  <ol class="install-flow__steps">
+    <li class="install-step" data-reveal style="--reveal-delay:60ms">
+      <span class="install-step__num" aria-hidden="true">01</span>
+      <div class="install-step__body">
+        <h3>Download the release zip</h3>
+        <p>Release zips live on GitHub. One curl, no sudo. The file lands in whatever directory you are standing in.</p>
+        <CopyBlock
+          id="install-flow-download"
+          commands={[plan.commands.zip[0]]}
+          label="Download the release zip"
+        />
+      </div>
+    </li>
+    <li class="install-step" data-reveal style="--reveal-delay:120ms">
+      <span class="install-step__num" aria-hidden="true">02</span>
+      <div class="install-step__body">
+        <h3>Extract it into place</h3>
+        <p>
+          Unzip, remove any old copy, then put the new tree where Cinnamon looks
+          for it: <code>{plan.targetDir}</code>. Applets live one directory
+          over, under <code>applets</code>.
+        </p>
+        <CopyBlock
+          id="install-flow-extract"
+          commands={plan.commands.zip.slice(1)}
+          label="Extract and copy into place"
+        />
+      </div>
+    </li>
+    <li class="install-step" data-reveal style="--reveal-delay:180ms">
+      <span class="install-step__num" aria-hidden="true">03</span>
+      <div class="install-step__body">
+        <h3>Restart Cinnamon</h3>
+        <p>Cinnamon reloads in place. No log out, no reboot.</p>
+        <p class="install-step__kbd">
+          <kbd>Alt</kbd>+<kbd>F2</kbd>, type <kbd>r</kbd>, press Enter.
+        </p>
+      </div>
+    </li>
+    <li class="install-step" data-reveal style="--reveal-delay:240ms">
+      <span class="install-step__num" aria-hidden="true">04</span>
+      <div class="install-step__body">
+        <h3>Enable it from System Settings</h3>
+        <p>
+          Open System Settings, then {manager}. Add {data.name} to the desktop
+          or panel. Right-click it any time to configure.
+        </p>
+        <p class="install-step__kbd">System Settings &gt; {manager}</p>
+      </div>
+    </li>
+  </ol>
+
+  <aside class="install-settings" data-reveal>
+    <p class="install-settings__label">Settings survive upgrades</p>
+    <p>
+      Settings never live in the install directory. Cinnamon keeps them in
+      <code>{settingsDir}</code>, one directory per uuid. The
+      <code>rm -rf</code> above touches only
+      <code>~/.local/share/cinnamon/</code>, so every clock, schedule, and
+      layout you configured carries across reinstalls untouched.
+    </p>
+  </aside>
+
+  <div class="install-upgrade" data-reveal>
+    <h3>Upgrades are the same commands</h3>
+    <p>
+      When a new version lands, run steps 01 and 02 again. The
+      <code>rm -rf</code> takes out the old tree so nothing deleted upstream
+      lingers, <code>cp -r</code> brings the new one in, restart, done. Your
+      settings ride along, because they live somewhere else entirely.
+    </p>
+  </div>
+</section>

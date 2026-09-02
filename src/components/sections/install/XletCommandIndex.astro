@@ -1,0 +1,67 @@
+---
+// PER-XLET COMMAND INDEX: the utility core. One row per xlet, rows never
+// cards. Commands derive from uuid + kind via lib/xlets.ts. Each row sets
+// its own --xlet-hue so the numeral carries the xlet accent (brief 2);
+// data-xlet-slug is the e2e contract hook.
+import CopyBlock from '../../ui/CopyBlock.astro';
+import Eyebrow from '../../ui/Eyebrow.astro';
+import MonoChip from '../../ui/MonoChip.astro';
+import { deriveInstall, type XletEntry } from '../../../lib/xlets';
+
+interface Props {
+  entries: XletEntry[];
+}
+
+const { entries } = Astro.props;
+const rows = entries.map((entry, i) => ({
+  entry,
+  install: deriveInstall(entry.data.uuid, entry.data.kind),
+  numeral: String(i + 1).padStart(2, '0'),
+  repoName: entry.data.repo.replace('https://github.com/RobertAlexanderH/', ''),
+  delay: `--reveal-delay:${(i % 4) * 60}ms`,
+}));
+---
+
+<section class="install-index" aria-labelledby="install-index-heading">
+  <Eyebrow label="Command index" />
+  <h2 id="install-index-heading">All five, ready to paste</h2>
+  <p class="install-index__intro" data-reveal>
+    The same flow for every xlet. Each row carries the release zip commands
+    for that uuid, a link to its page, and its repository. This page is the
+    only install reference you need.
+  </p>
+
+  <ul class="install-index__rows">
+    {
+      rows.map(({ entry, install, numeral, repoName, delay }) => (
+        <li
+          class="install-index__row"
+          data-xlet-slug={entry.id}
+          data-reveal
+          style={`--xlet-hue:${entry.data.accentHue};${delay}`}
+        >
+          <span class="install-index__num" aria-hidden="true">{numeral}</span>
+          <div class="install-index__main">
+            <div class="install-index__head">
+              <h3 class="install-index__name">
+                <a href={`/xlets/${entry.id}/`}>{entry.data.name}</a>
+              </h3>
+              <MonoChip label={entry.data.kind.toUpperCase()} />
+              <a class="install-index__repo" href={entry.data.repo} rel="noopener">
+                RobertAlexanderH/{repoName}
+              </a>
+            </div>
+            <CopyBlock
+              id={`install-index-${entry.id}`}
+              commands={install.commands.zip}
+              label={`${entry.data.name} release zip install commands`}
+            />
+            <p class="install-index__meta">
+              uuid <code>{entry.data.uuid}</code>
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>

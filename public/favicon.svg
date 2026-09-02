@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- One mint tile outlined on pinescale graphite, 1px inner hairline,
+       sharp corners. -->
+  <rect width="32" height="32" fill="oklch(0.145 0.006 168)"/>
+  <rect x="8.5" y="8.5" width="15" height="15" fill="none" stroke="oklch(0.84 0.17 152)" stroke-width="1.5"/>
+  <rect x="12" y="12" width="8" height="8" fill="none" stroke="oklch(0.84 0.17 152)" stroke-opacity="0.45" stroke-width="1"/>
+</svg>
