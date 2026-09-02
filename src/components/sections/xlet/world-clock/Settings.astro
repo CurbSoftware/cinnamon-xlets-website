@@ -112,20 +112,16 @@ const formats = [
     margin-bottom: var(--space-6);
   }
 
+  /* The settings window is the tactility moment: it gets the wide row,
+     near feature-width, with the strftime specimen below it. */
   .wc-settings__grid {
     display: grid;
-    gap: var(--space-6);
+    gap: var(--space-7);
     align-items: start;
   }
 
-  @media (min-width: 64rem) {
-    .wc-settings__grid {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    }
-  }
-
   .wc-settings__window {
-    justify-self: center;
+    min-width: 0;
   }
 
   .wc-settings__sub {
@@ -265,5 +261,37 @@ const formats = [
     font-size: var(--text-3xl);
     line-height: 1;
     color: oklch(var(--muted-foreground));
+  }
+</style>
+
+<style is:global>
+  /* The tactility moment gets real estate: on desktop the window widens to
+     roughly two thirds of the viewport (the shared component caps it at
+     34rem), and its row labels step up one size while staying interface
+     type, not body copy. */
+  @media (min-width: 64rem) {
+    .wc-settings .settings-window {
+      max-width: 68vw;
+    }
+  }
+
+  .wc-settings .settings-window {
+    font-size: var(--text-base);
+  }
+
+  .wc-settings .settings-window__select,
+  .wc-settings .settings-window__entry,
+  .wc-settings .settings-window__button {
+    font-size: var(--text-sm);
+  }
+
+  /* One accent hue per page: the shared settings window paints "on"
+     switches in the site mint; on this page they take the sky. */
+  .wc-settings .settings-window .sw--on {
+    background: oklch(var(--xlet-accent) / 0.25);
+  }
+
+  .wc-settings .settings-window span.sw--on span.sw__thumb {
+    background: oklch(var(--xlet-accent));
   }
 </style>

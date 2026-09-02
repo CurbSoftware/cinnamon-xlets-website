@@ -318,6 +318,17 @@
 
 .ticker__viewport {
   overflow: hidden;
+  /* Text fades out at both viewport edges instead of hard-cutting. The
+     mask sits on the static viewport, never the moving track, so the
+     -50% marquee loop stays seamless. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
 }
 
 .ticker__track {
@@ -457,15 +468,28 @@
   width: clamp(6.5rem, 13vw, 10rem);
   height: clamp(4.5rem, 8vw, 6.5rem);
   overflow: hidden;
-  border: var(--hairline-width) solid var(--rule);
+  /* mint keyline at rest: the sliver reads as product, not a void */
+  border: var(--hairline-width) solid oklch(var(--primary) / 0.55);
   transition: width var(--dur) var(--ease-out);
 }
 
+/* Light theme: a dark screenshot on paper needs a soft graphite shadow to
+   seat it, lighter than dark theme's framing */
+:root[data-theme='light'] .xrow__shot {
+  box-shadow: 0 2px 12px oklch(var(--pine-950) / 0.18);
+}
+
+/* The crop window: each row sets --shot-zoom / --shot-origin (or --shot-pos
+   for the extreme panel strip) in XletIndex.astro, hand-tuned per source
+   image so the sliver frames the bright product area, not empty desktop.
+   The zoom is a static transform (a crop, not motion). */
 .xrow__shot img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 30%;
+  object-position: var(--shot-pos, 50% 30%);
+  transform: scale(var(--shot-zoom, 1));
+  transform-origin: var(--shot-origin, 50% 50%);
 }
 
 .xrow:hover .xrow__shot,
@@ -687,7 +711,7 @@
 
 .finale__shape {
   position: absolute;
-  border: var(--hairline-width) solid oklch(var(--foreground) / 0.1);
+  border: var(--hairline-width) solid oklch(var(--foreground) / 0.2);
 }
 
 /* a panel strip */
@@ -713,7 +737,7 @@
   left: calc(50% - 0.5px);
   bottom: 50%;
   width: 1px;
-  background: oklch(var(--foreground) / 0.14);
+  background: oklch(var(--foreground) / 0.28);
   transform-origin: bottom center;
 }
 
@@ -748,11 +772,11 @@
 .finale__tile {
   display: block;
   aspect-ratio: 1;
-  border: var(--hairline-width) solid oklch(var(--foreground) / 0.1);
+  border: var(--hairline-width) solid oklch(var(--foreground) / 0.2);
 }
 
 .finale__tile--active {
-  border-color: oklch(var(--primary) / 0.4);
+  border-color: oklch(var(--primary) / 0.55);
 }
 
 /* --- Responsive: recompose, do not shrink (brief section 10) ----------------- */
@@ -880,6 +904,13 @@
     font-size: clamp(2rem, 8.5vw, var(--text-statement));
   }
 
+  /* Measure guard: 62ch counts zero-glyph widths, which runs past 70 real
+     characters once the viewport stops constraining the column (large
+     phones, landscape). A px cap holds lines at about 70 characters. */
+  .why__body {
+    max-width: 34rem;
+  }
+
   .finale__statement {
     font-size: clamp(2.75rem, 12vw, 4.5rem);
   }
@@ -890,6 +921,16 @@
 
   .install-overview__step {
     grid-template-columns: 2.5rem 1fr;
+  }
+}
+
+/* --- Small phones ------------------------------------------------------------- */
+
+/* The panel chips carry the nav motif in miniature; at 12px they sit at
+   the edge of crisp, 13px keeps them readable without crowding the strip */
+@media (max-width: 30rem) {
+  .microdesk__panel-chip {
+    font-size: 0.8125rem;
   }
 }
 

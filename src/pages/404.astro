@@ -14,6 +14,28 @@ import Button from '../components/ui/Button.astro';
     </svg>
     <h1>No tile here</h1>
     <p>The workspace you switched to is empty. Try the index instead.</p>
+
+    <div
+      class="nf-stage"
+      role="img"
+      aria-label="A Cinnamon panel strip: workspaces 1, 2, 3, then a Not Found chip where the fourth workspace would be"
+    >
+      <div class="nf-strip">
+        <div class="nf-strip__in">
+          <span class="nf-menu" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="nf-sep" aria-hidden="true"></span>
+          <ul class="nf-chips" aria-hidden="true">
+            <li class="nf-chip">1</li>
+            <li class="nf-chip">2</li>
+            <li class="nf-chip">3</li>
+            <li class="nf-chip nf-chip--missing">Not found</li>
+            <li class="nf-chip nf-chip--add">+</li>
+          </ul>
+        </div>
+      </div>
+      <div class="nf-stage__space" aria-hidden="true"></div>
+    </div>
+
     <div class="not-found__actions">
       <Button href="/">Back to the desktop</Button>
     </div>
@@ -32,5 +54,96 @@ import Button from '../components/ui/Button.astro';
 
   h1 {
     font-size: var(--text-display);
+  }
+
+  /* Ghost panel strip: the panel runs edge to edge (abspos left/right 0
+     against the layout viewport, spacer reserving the height, no
+     transformed ancestor), everything on it faded except the punchline. */
+  .nf-stage {
+    --nf-h: clamp(2.5rem, 4vw, 3rem);
+    --nf-inset: max(var(--gutter), calc((100% - var(--container)) / 2));
+    inline-size: 100%;
+    margin-block: var(--space-2);
+  }
+
+  .nf-strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--nf-h);
+    border-top: var(--hairline-width) solid var(--hairline);
+    border-bottom: var(--hairline-width) solid var(--hairline);
+  }
+
+  .nf-stage__space {
+    height: var(--nf-h);
+  }
+
+  .nf-strip__in {
+    height: 100%;
+    padding-inline: var(--nf-inset);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .nf-menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    inline-size: 0.875rem;
+    flex: none;
+    opacity: 0.4;
+  }
+
+  .nf-menu i {
+    block-size: 0.375rem;
+    background: oklch(var(--muted-foreground));
+  }
+
+  .nf-sep {
+    inline-size: 1px;
+    block-size: 55%;
+    background: var(--rule);
+    flex: none;
+    opacity: 0.4;
+  }
+
+  .nf-chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .nf-chip {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    padding: 0.1875rem 0.4375rem;
+    white-space: nowrap;
+    color: oklch(var(--muted-foreground));
+    opacity: 0.4;
+  }
+
+  .nf-chip--missing {
+    opacity: 1;
+    border: var(--hairline-width) solid oklch(var(--primary));
+    color: oklch(var(--primary));
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .nf-chip--add {
+    opacity: 0.25;
+  }
+
+  @media (max-width: 36rem) {
+    .nf-menu,
+    .nf-sep {
+      display: none;
+    }
   }
 </style>

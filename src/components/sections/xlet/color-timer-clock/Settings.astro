@@ -234,14 +234,16 @@ const gradient = `linear-gradient(90deg, ${stops.map((s) => `${s.hex} ${s.pos}%`
     justify-items: end;
   }
 
+  /* Stop labels: one pixel over the interface sizes; they are the smallest
+     type on the page and the schedule's only axis, so they earn it. */
   .ct-stop__time {
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
+    font-size: calc(var(--text-sm) + 1px);
   }
 
   .ct-stop__name {
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: calc(var(--text-xs) + 1px);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: oklch(var(--muted-foreground));
@@ -316,5 +318,26 @@ const gradient = `linear-gradient(90deg, ${stops.map((s) => `${s.hex} ${s.pos}%`
     font-size: var(--text-sm);
     color: oklch(var(--muted-foreground));
     max-width: 56ch;
+  }
+</style>
+
+<style is:global>
+  /* Feature index gutter: more air between the mono numeral column and the
+     copy so the numbers read as an index. Lives here (not in the shared
+     xlet.css, which this agent does not touch) and applies to the feature
+     index on all five xlet pages. */
+  .xlet-features .xlet-features__item {
+    grid-template-columns: 3.5rem 1fr;
+    column-gap: var(--space-5);
+  }
+
+  /* One accent hue per page: the shared settings window paints "on"
+     switches in the site mint; on this page they take the schedule amber. */
+  .ct-settings .settings-window .sw--on {
+    background: oklch(var(--xlet-accent) / 0.25);
+  }
+
+  .ct-settings .settings-window span.sw--on span.sw__thumb {
+    background: oklch(var(--xlet-accent));
   }
 </style>

@@ -14,6 +14,27 @@ interface Props {
 }
 
 const { xlets } = Astro.props;
+
+/* Sliver crop windows, hand-tuned per source image (see home.css
+   .xrow__shot img): the shots are mostly dark desktop, so at rest the
+   sliver must frame the bright product area or it reads as a void.
+   --shot-zoom scales around --shot-origin (both box-relative). The
+   workspace-names shot is an extreme 24:1 panel strip: cover already crops
+   it to a sliver, so it only needs object-position to land on the name
+   chips. Values verified against the source shots, not guessed. */
+const SHOT_CROP: Record<string, string> = {
+  // the wall of clock cards, upper left of the shot
+  'world-clock': '--shot-zoom:3;--shot-origin:17% 16%',
+  // the clock card mid-ramp to its amber stop, right of frame
+  'color-timer-clock': '--shot-zoom:3;--shot-origin:89% 17%',
+  // the 2x2 tile grid desklet with its outlined active tile
+  'workspace-grid': '--shot-zoom:3;--shot-origin:57% 16%',
+  // the workspace name chips in the panel strip
+  'workspace-names': '--shot-pos:32% 50%',
+  // the profiles window (the luminance peak is the app menu; the window is
+  // the product)
+  'panel-profiles': '--shot-zoom:3;--shot-origin:62% 42%',
+};
 ---
 
 <section id="xlets" class="xindex" aria-label="The five xlets">
@@ -29,7 +50,7 @@ const { xlets } = Astro.props;
             <a
               class="xrow"
               href={`/xlets/${entry.id}/`}
-              style={`--xlet-hue:${entry.data.accentHue}`}
+              style={`--xlet-hue:${entry.data.accentHue};${SHOT_CROP[entry.id] ?? ''}`}
             >
               <span class="xrow__numeral" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}

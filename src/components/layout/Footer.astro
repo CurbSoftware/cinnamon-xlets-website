@@ -2,28 +2,32 @@
 import { LINKS } from '../../consts';
 import { getXlets } from '../../lib/xlets';
 
-// Quiet technical appendix (brief section 7): strong rule, project line on
-// the left, every repo link on the right, mono microtype.
+// Quiet technical appendix (brief section 7): one strong rule, the project
+// line on the left, every link in one quiet row on the right. No columns,
+// no boxes; mono microtype.
 const xlets = await getXlets();
-const repos = xlets.map((x) => ({ slug: x.id, name: x.data.name }));
+const links = [
+  ...xlets.map((x) => ({
+    label: x.data.name,
+    href: LINKS.repos[x.id as keyof typeof LINKS.repos],
+  })),
+  { label: 'monorepo', href: LINKS.monorepo },
+  { label: 'curbsoftware.com', href: LINKS.curbsoftware },
+  { label: 'buttons.curbsoftware.com', href: LINKS.buttons },
+];
 ---
 
 <footer class="site-footer" id="footer">
   <div class="site-footer__inner">
-    <div class="site-footer__project">
-      <p class="site-footer__line">xlets · GPL-2.0-or-later · by CurbSoftware</p>
-      <p class="site-footer__line">
-        <a href={LINKS.monorepo} rel="noopener">monorepo</a>
-        <a href={LINKS.curbsoftware} rel="noopener">curbsoftware.com</a>
-        <a href={LINKS.buttons} rel="noopener">buttons.curbsoftware.com</a>
-      </p>
-    </div>
-    <nav class="site-footer__repos" aria-label="Repositories">
-      {repos.map((repo) => (
-        <a href={LINKS.repos[repo.slug as keyof typeof LINKS.repos]} rel="noopener">
-          {repo.name}
-        </a>
-      ))}
+    <p class="site-footer__project">xlets · GPL-2.0-or-later · by CurbSoftware</p>
+    <nav class="site-footer__links" aria-label="Repositories and project links">
+      {
+        links.map((link) => (
+          <a href={link.href} rel="noopener">
+            {link.label}
+          </a>
+        ))
+      }
     </nav>
   </div>
 </footer>
@@ -38,41 +42,55 @@ const repos = xlets.map((x) => ({ slug: x.id, name: x.data.name }));
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--space-6);
+    align-items: baseline;
+    gap: var(--space-4) var(--space-6);
     max-width: var(--container);
     margin-inline: auto;
     padding: var(--space-7) var(--gutter);
   }
 
-  .site-footer__line,
-  .site-footer__repos {
+  .site-footer__project,
+  .site-footer__links {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.06em;
     color: oklch(var(--muted-foreground));
   }
 
-  .site-footer__line {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-bottom: var(--space-2);
+  .site-footer__project {
+    margin: 0;
+    white-space: nowrap;
   }
 
-  .site-footer__line a,
-  .site-footer__repos a {
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2) var(--space-4);
+    /* the row wraps rather than fighting the project line for width */
+    max-width: 56rem;
+  }
+
+  .site-footer__links a {
     text-decoration: none;
     color: inherit;
   }
 
-  .site-footer__line a:hover,
-  .site-footer__repos a:hover {
+  .site-footer__links a:hover,
+  .site-footer__links a:focus-visible {
     color: oklch(var(--primary));
   }
 
-  .site-footer__repos {
-    display: grid;
-    gap: var(--space-2);
-    text-align: right;
+  /* phones: the project line and the link row stack, left aligned */
+  @media (max-width: 48rem) {
+    .site-footer__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+
+    .site-footer__links {
+      justify-content: flex-start;
+    }
   }
 </style>

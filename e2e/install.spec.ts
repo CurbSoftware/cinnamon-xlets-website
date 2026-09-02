@@ -102,13 +102,23 @@ test('every copy button exists with an accessible name and a labeled target', as
 });
 
 test.describe('clipboard', () => {
-  test.use({ permissions: ['clipboard-write'] });
-  test('copying from a command block reports success', async ({ page }) => {
+  test.use({ permissions: ['clipboard-write', 'clipboard-read'] });
+  test('copying from a command block reports success and copies the unwrapped commands', async ({ page }) => {
     await page.goto('/install/');
     const block = page.locator('.install-index .copy-block').first();
     await block.locator('[data-copy]').click();
     // the status line inside the SAME block, not the page's first
     await expect(block.locator('[data-copy-status]')).toHaveText(/copied/i);
+    // the <wbr> break opportunities after / and @ are visual only: the
+    // clipboard receives the exact unwrapped command lines
+    const worldClock = PLANS[0];
+    const expected = [
+      `curl -fLO ${worldClock.zipUrl}`,
+      `unzip ${worldClock.repo}.zip`,
+      `rm -rf ${worldClock.targetDir}`,
+      `cp -r ${worldClock.uuid}/files/${worldClock.uuid} ${worldClock.targetDir}`,
+    ].join('\n');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(expected);
   });
 });
 

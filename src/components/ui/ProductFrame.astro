@@ -33,13 +33,17 @@ const { perspective = false, caption, class: className } = Astro.props;
   .product-frame__shell {
     position: relative;
     border: var(--hairline-width) solid var(--hairline);
+    /* the top edge catches the light: the border row itself reads mint */
+    border-top-color: oklch(var(--primary) / 0.55);
     background: oklch(var(--card));
     box-shadow: var(--shadow-frame);
     /* mint reflection on framed screenshots */
     overflow: hidden;
   }
 
-  /* Mint edge light catching the top edge */
+  /* Mint edge light: a luminous 1px line along the top. Near-solid through
+     the middle so it survives pixel sampling at 1x, easing out only at the
+     corners where a real edge light would. */
   .product-frame__shell::before {
     content: '';
     position: absolute;
@@ -47,21 +51,38 @@ const { perspective = false, caption, class: className } = Astro.props;
     height: 1px;
     background: linear-gradient(
       to right,
-      transparent,
-      oklch(var(--primary) / 0.7),
-      transparent
+      oklch(var(--primary) / 0.3),
+      oklch(var(--primary) / 0.9) 12%,
+      oklch(var(--primary) / 0.75) 88%,
+      oklch(var(--primary) / 0.3)
     );
     z-index: 1;
+    pointer-events: none;
+  }
+
+  /* The light spilling just inside the frame: a soft wash over the top
+     40px of the screenshot, gone long before mid-frame. Light catching an
+     edge, not a glow effect. */
+  .product-frame__shell::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 40px;
+    background: linear-gradient(to bottom, oklch(var(--primary) / 0.11), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Slight perspective: the figure wrapper carries the 3D context (a
+     static tilt, paint-only, never a layout shift), the shell leans within
+     it. Kept under reduced motion: nothing moves, the material just sits
+     at an angle. */
+  .product-frame--perspective {
+    perspective: 1400px;
   }
 
   .product-frame--perspective .product-frame__shell {
-    transform: perspective(1200px) rotateX(1.4deg);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .product-frame--perspective .product-frame__shell {
-      transform: none;
-    }
+    transform: rotateX(1.2deg) rotateY(-1.5deg);
   }
 
   .product-frame__caption {

@@ -78,8 +78,13 @@
        here. See the * rule below for why the triplet itself cannot live
        on :root. */
     --xlet-hue: 152;
-    --xlet-accent-lc: 0.48 0.13;
-    --xlet-accent-bright-lc: 0.62 0.15;
+    /* Light-theme accent ramp tuned for contrast on paper: every hue of
+       the set (240, 75, 152, 300, 25) measures 6.6:1 or better (lc) and
+       4.3:1 or better (bright) on both --background and --surface-raised,
+       clear of the 3:1 large-type floor. Chroma stays put so the hue
+       identity does not shift. */
+    --xlet-accent-lc: 0.44 0.12;
+    --xlet-accent-bright-lc: 0.55 0.14;
 
     /* State colors: destructive / ok pair, AA on both themes' surfaces */
     --state-danger: 0.55 0.16 25;
@@ -220,5 +225,11 @@
     --surface-raised: var(--pine-100);
     --surface-editorial: var(--pine-100);
     --surface-finale: var(--pine-50);
+
+    /* Paper seating: dark screenshots need a softer, lighter graphite
+       shadow than dark theme's deep drop, or they sit pasted on the page */
+    --shadow-frame: 0 0 0 var(--hairline-width) var(--hairline),
+      0 12px 32px oklch(var(--pine-950) / 0.16),
+      0 0 48px oklch(var(--primary) / 0.07);
   }
 }

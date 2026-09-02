@@ -6,6 +6,12 @@ import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
 
 // In Panel Workspace Name settings showcase: fragment rebuilt from the real
 // settings-schema.json labels and defaults. Static CSS only.
+//
+// Below the window, the page's second full-bleed: a reprise of the number
+// mode band, six workspaces deep, running edge to edge with the same
+// scrollbar-safe technique as PanelBand (abspos left/right 0 against the
+// initial containing block, spacer reserving the height, no transformed
+// ancestor so nothing re-parents it).
 const rows: SettingsRow[] = [
   { section: 'Display' },
   { label: 'Workspace button labels', type: 'select', value: 'Number + Name' },
@@ -16,6 +22,21 @@ const rows: SettingsRow[] = [
   { label: 'Show an add button after workspace names', type: 'switch', on: true, hint: 'Needs workspace editing' },
   { label: 'Confirm before removing a named workspace', type: 'switch', on: true, hint: 'Needs workspace editing' },
 ];
+
+// Panel furniture clock, frozen at build time. No client JavaScript.
+const parts = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'short',
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+}).formatToParts(new Date());
+const p: Record<string, string> = {};
+for (const part of parts) p[part.type] = part.value;
+const clock = `${p.weekday} ${p.day} ${p.month} ${p.hour}:${p.minute}`.toUpperCase();
+
+const workspaces = ['1', '2', '3', '4', '5', '6'];
 ---
 
 <section class="wn-settings" aria-labelledby="wn-settings-heading">
@@ -25,6 +46,26 @@ const rows: SettingsRow[] = [
     <SettingsWindow title="In Panel Workspace Name" rows={rows} />
     <p class="wn-settings__note">Fragment of the real settings window. Labels and defaults come from settings-schema.json.</p>
   </Reveal>
+
+  <div class="wn-reprise">
+    <div class="wn-reprise__strips">
+      <span class="wn-reprise__tag">03 / Number, again</span>
+      <div class="wn-reprise__strip">
+        <div class="wn-reprise__in">
+          <span class="wn-reprise__menu" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="wn-reprise__sep" aria-hidden="true"></span>
+          <ul class="wn-reprise__chips" aria-label="Workspace buttons, number only, six workspaces">
+            {workspaces.map((n) => <li class:list={['wn-reprise__chip', { 'wn-reprise__chip--active': n === '2' }]} aria-label={n === '2' ? 'Workspace 2, current' : undefined}>{n}</li>)}
+            <li class="wn-reprise__chip wn-reprise__chip--add" aria-label="Add workspace button">
+              <span aria-hidden="true">+</span>
+            </li>
+          </ul>
+          <span class="wn-reprise__clock" aria-hidden="true">{clock}</span>
+        </div>
+      </div>
+    </div>
+    <div class="wn-reprise__space" aria-hidden="true"></div>
+  </div>
 </section>
 
 <style>
@@ -44,5 +85,147 @@ const rows: SettingsRow[] = [
     letter-spacing: 0.06em;
     color: oklch(var(--muted-foreground));
     max-width: 40ch;
+  }
+
+  /* Second bleed: same geometry contract as PanelBand. Fixed heights so
+     the abspos stack and the in-flow spacer always agree. */
+  .wn-reprise {
+    --wnr-h: clamp(2.5rem, 4vw, 3rem);
+    --wnr-ann-h: 1.5rem;
+    --wnr-inset: max(var(--gutter), calc((100% - var(--container)) / 2));
+    --wnr-total: calc(var(--wnr-ann-h) + 0.25rem + var(--wnr-h));
+    margin-top: var(--space-8);
+  }
+
+  .wn-reprise__strips {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .wn-reprise__space {
+    height: var(--wnr-total);
+  }
+
+  .wn-reprise__tag {
+    height: var(--wnr-ann-h);
+    display: flex;
+    align-items: center;
+    padding-inline: var(--wnr-inset);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: oklch(var(--xlet-accent));
+  }
+
+  .wn-reprise__strip {
+    height: var(--wnr-h);
+    background: oklch(var(--panel) / 0.92);
+    border-top: var(--hairline-width) solid var(--hairline-strong);
+    border-bottom: var(--hairline-width) solid var(--hairline);
+  }
+
+  .wn-reprise__in {
+    height: 100%;
+    padding-inline: var(--wnr-inset);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .wn-reprise__menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    inline-size: 0.875rem;
+    flex: none;
+  }
+
+  .wn-reprise__menu i {
+    block-size: 0.375rem;
+    background: oklch(var(--panel-foreground) / 0.7);
+  }
+
+  .wn-reprise__sep {
+    inline-size: 1px;
+    block-size: 55%;
+    background: var(--rule);
+    flex: none;
+  }
+
+  .wn-reprise__chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .wn-reprise__chip {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    padding: 0.1875rem 0.4375rem;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    color: oklch(var(--panel-foreground) / 0.82);
+  }
+
+  .wn-reprise__chip--active {
+    border-color: oklch(var(--xlet-accent));
+    color: oklch(var(--xlet-accent));
+    background: oklch(var(--xlet-accent) / 0.08);
+    font-weight: 600;
+  }
+
+  .wn-reprise__chip--add {
+    color: oklch(var(--panel-foreground) / 0.55);
+  }
+
+  .wn-reprise__clock {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    color: oklch(var(--panel-foreground) / 0.62);
+  }
+
+  @media (max-width: 48rem) {
+    .wn-reprise__clock {
+      display: none;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .wn-reprise__menu,
+    .wn-reprise__sep {
+      display: none;
+    }
+
+    .wn-reprise__in {
+      gap: var(--space-2);
+    }
+
+    .wn-reprise__chip {
+      padding-inline: 0.3125rem;
+      letter-spacing: 0.04em;
+    }
+  }
+</style>
+
+<style is:global>
+  /* One accent hue per page: the shared settings window paints "on"
+     switches in the site mint; on this page they take the violet. */
+  .wn-settings .settings-window .sw--on {
+    background: oklch(var(--xlet-accent) / 0.25);
+  }
+
+  .wn-settings .settings-window span.sw--on span.sw__thumb {
+    background: oklch(var(--xlet-accent));
   }
 </style>

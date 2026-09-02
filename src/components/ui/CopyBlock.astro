@@ -13,10 +13,20 @@ interface Props {
 }
 
 const { id, commands, label = 'Commands', class: className } = Astro.props;
+
+// Break opportunities after each path separator (/ and @): with pre-wrap,
+// terminal lines fold at segment boundaries instead of scrolling off the
+// right edge or snapping mid-token. <wbr> contributes no text, so
+// textContent (what the copy button reads) stays the clean unwrapped command.
+const segs = (line: string): string[] => line.split(/(?<=[/@])/);
 ---
 
 <div class:list={['copy-block', className]}>
-  <pre class="copy-block__pre" id={id} tabindex="0" aria-label={label}><code>{commands.join('\n')}</code></pre>
+  <pre class="copy-block__pre" id={id} tabindex="0" aria-label={label}><code>{commands.map((line, i) => (
+    <Fragment>{i > 0 && '\n'}{segs(line).map((seg) => (
+      <Fragment>{seg}<wbr /></Fragment>
+    ))}</Fragment>
+  ))}</code></pre>
   <div class="copy-block__bar">
     <button class="copy-block__btn" type="button" data-copy={id} hidden>Copy</button>
     <span class="visually-hidden" role="status" aria-live="polite" data-copy-status></span>
@@ -32,11 +42,14 @@ const { id, commands, label = 'Commands', class: className } = Astro.props;
   .copy-block__pre {
     margin: 0;
     padding: var(--space-4) var(--space-5);
-    overflow-x: auto;
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     line-height: 1.7;
     color: oklch(var(--card-foreground));
+    /* wrap at the <wbr> points after / and @; break-word is the last
+       resort for a separator-free run wider than the whole line */
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
 
   .copy-block__bar {
@@ -46,20 +59,34 @@ const { id, commands, label = 'Commands', class: className } = Astro.props;
     padding: var(--space-2) var(--space-3);
   }
 
+  /* Reads as a button at rest: quiet mono label on a background step,
+     never bare text. Square corners, utility voice. */
   .copy-block__btn {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: oklch(var(--muted-foreground));
-    background: none;
+    background: oklch(var(--muted-foreground) / 0.12);
     border: var(--hairline-width) solid var(--rule);
     padding: var(--space-1) var(--space-3);
     cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
   }
 
-  .copy-block__btn:hover {
+  .copy-block__btn:hover,
+  .copy-block__btn:focus-visible {
     color: oklch(var(--primary));
     border-color: var(--hairline-strong);
+    background: oklch(var(--primary) / 0.08);
+  }
+
+  /* the mint tile outline IS the focus ring (brief 11) */
+  .copy-block__btn:focus-visible {
+    outline: var(--hairline-width) solid oklch(var(--primary) / 0.7);
+    outline-offset: 2px;
   }
 </style>

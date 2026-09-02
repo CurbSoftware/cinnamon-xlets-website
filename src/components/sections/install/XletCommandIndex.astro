@@ -20,6 +20,10 @@ const rows = entries.map((entry, i) => ({
   repoName: entry.data.repo.replace('https://github.com/RobertAlexanderH/', ''),
   delay: `--reveal-delay:${(i % 4) * 60}ms`,
 }));
+
+// Break opportunities after / and @ so the uuid folds after its @ suffix on
+// narrow screens instead of mid-token (same treatment CopyBlock renders).
+const segs = (s: string): string[] => s.split(/(?<=[/@])/);
 ---
 
 <section class="install-index" aria-labelledby="install-index-heading">
@@ -57,7 +61,9 @@ const rows = entries.map((entry, i) => ({
               label={`${entry.data.name} release zip install commands`}
             />
             <p class="install-index__meta">
-              uuid <code>{entry.data.uuid}</code>
+              uuid <code>{segs(entry.data.uuid).map((seg) => (
+                <Fragment>{seg}<wbr /></Fragment>
+              ))}</code>
             </p>
           </div>
         </li>

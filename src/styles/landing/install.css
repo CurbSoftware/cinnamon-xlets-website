@@ -94,6 +94,9 @@
 
 .install-step__num {
   font-family: var(--font-mono);
+  /* weight 500: one numbered voice with .xrow__numeral and the index
+     numerals; 400 read lighter than every other numeral on the site */
+  font-weight: 500;
   font-size: var(--text-xl);
   line-height: 1.2;
   text-align: right;
@@ -202,6 +205,7 @@
 
 .install-index__num {
   font-family: var(--font-mono);
+  font-weight: 500; /* one voice with .xrow__numeral (home) and the step numerals */
   font-size: var(--text-3xl);
   line-height: 1;
   text-align: right;
@@ -249,6 +253,18 @@
 
 .install-index__main .copy-block {
   margin-top: var(--space-4);
+}
+
+/* Tile grammar reaches the copy affordance: when a row or step is hovered
+   or keyboard-focused within, its copy button steps up to the mint hairline
+   and a foreground COPY label, so the page's one interactive element is
+   legible without touching the button itself. */
+.install-index__row:hover .copy-block__btn,
+.install-index__row:focus-within .copy-block__btn,
+.install-step:hover .copy-block__btn,
+.install-step:focus-within .copy-block__btn {
+  color: oklch(var(--foreground));
+  border-color: var(--hairline-strong);
 }
 
 .install-index__meta {

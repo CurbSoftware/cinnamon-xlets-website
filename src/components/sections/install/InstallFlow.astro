@@ -15,6 +15,11 @@ const { data } = entry;
 const plan = deriveInstall(data.uuid, data.kind);
 const settingsDir = `~/.config/cinnamon/spices/${data.uuid}`;
 const manager = data.kind === 'desklet' ? 'Desklets' : 'Applets';
+
+// Break opportunities after / and @ so inline paths in prose fold at
+// segment boundaries on narrow screens (same treatment CopyBlock renders).
+// <wbr> adds no text, so copied text stays the clean path.
+const segs = (s: string): string[] => s.split(/(?<=[/@])/);
 ---
 
 <section class="install-flow" aria-labelledby="install-flow-heading">
@@ -45,7 +50,9 @@ const manager = data.kind === 'desklet' ? 'Desklets' : 'Applets';
         <h3>Extract it into place</h3>
         <p>
           Unzip, remove any old copy, then put the new tree where Cinnamon looks
-          for it: <code>{plan.targetDir}</code>. Applets live one directory
+          for it: <code>{segs(plan.targetDir).map((seg) => (
+            <Fragment>{seg}<wbr /></Fragment>
+          ))}</code>. Applets live one directory
           over, under <code>applets</code>.
         </p>
         <CopyBlock
@@ -82,7 +89,9 @@ const manager = data.kind === 'desklet' ? 'Desklets' : 'Applets';
     <p class="install-settings__label">Settings survive upgrades</p>
     <p>
       Settings never live in the install directory. Cinnamon keeps them in
-      <code>{settingsDir}</code>, one directory per uuid. The
+      <code>{segs(settingsDir).map((seg) => (
+        <Fragment>{seg}<wbr /></Fragment>
+      ))}</code>, one directory per uuid. The
       <code>rm -rf</code> above touches only
       <code>~/.local/share/cinnamon/</code>, so every clock, schedule, and
       layout you configured carries across reinstalls untouched.

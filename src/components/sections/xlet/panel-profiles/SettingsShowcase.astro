@@ -6,12 +6,14 @@ import type { SettingsRow } from '../../../ui/SettingsWindow.astro';
 import MonoChip from '../../../ui/MonoChip.astro';
 
 // Panel Profiles settings showcase, two sections.
-// 1. The profile story: named profile rows with kind chips and a modified
-//    dot, plus the transactional restore narrative as three mono steps and
-//    a red-then-green micro state strip (snapshot -> apply -> verified).
+// 1. The profile story: a mid-switch menu moment (chips plus a ghost
+//    before/after preview of the panels changing), named profile rows with
+//    kind chips and a modified dot, plus the transactional restore narrative
+//    as three mono steps and a micro state strip.
 // 2. A settings window fragment rebuilt from the real settings-schema.json
-//    labels and defaults. State colors are the shared --state-danger /
-//    --state-ok tokens from tokens.css.
+//    labels and defaults. All state colors ride this page's single accent
+//    hue: the verified segment and the "on" switches take the rose, not the
+//    site mint (one hue per page).
 const rows: SettingsRow[] = [
   { section: 'Profiles' },
   { label: 'Manage saved profiles', type: 'button', value: 'Open', hint: 'Rename, duplicate or delete panel profiles' },
@@ -36,7 +38,39 @@ const rows: SettingsRow[] = [
     tag and the menu offers an Update.
   </p>
 
-  <Reveal>
+  <Reveal class="pp-switch">
+    <ul class="pp-chips" aria-label="Profile menu, mid-switch">
+      <li class="pp-chip pp-chip--active">
+        <span class="pp-chip__check" aria-hidden="true"></span>
+        CODING DUAL
+      </li>
+      <li class="pp-chip pp-chip--modified">
+        WRITING SINGLE
+        <i class="pp-chip__dot" aria-hidden="true"></i>
+        <span class="visually-hidden">modified</span>
+      </li>
+      <li class="pp-chip">VM LAB</li>
+    </ul>
+
+    <div
+      class="pp-preview"
+      role="img"
+      aria-label="Applying VM Lab: the live layout of two panel bars changes into one panel bar plus a desklet dot, with a rose progress hairline between"
+    >
+      <div class="pp-pane">
+        <span class="pp-pane__tag">Live &middot; coding dual</span>
+        <span class="pp-pane__bars" aria-hidden="true"><i></i><i></i></span>
+      </div>
+      <div class="pp-progress" aria-hidden="true"></div>
+      <div class="pp-pane">
+        <span class="pp-pane__tag">Applying &middot; vm lab</span>
+        <span class="pp-pane__bars" aria-hidden="true"><i></i></span>
+        <i class="pp-desklet" aria-hidden="true"></i>
+      </div>
+    </div>
+  </Reveal>
+
+  <Reveal delay={80}>
     <ul class="pp-profiles" aria-label="Saved profiles">
       <li class="pp-profile pp-profile--active">
         <span class="pp-profile__check" aria-hidden="true"></span>
@@ -64,7 +98,7 @@ const rows: SettingsRow[] = [
     </ul>
   </Reveal>
 
-  <Reveal class="pp-transaction" delay={80}>
+  <Reveal class="pp-transaction" delay={120}>
     <ol class="pp-steps">
       <li class="pp-step">
         <span class="pp-step__numeral" aria-hidden="true">01</span>
@@ -126,6 +160,113 @@ const rows: SettingsRow[] = [
   .pp-flow__lede {
     max-width: 52ch;
     color: oklch(var(--muted-foreground));
+  }
+
+  /* The mid-switch moment: the applet menu as chips (check on the active
+     profile, dot on the drifted one), with a ghost preview of the panel
+     layout changing underneath. Ghost = dashed panes, faint bars; the rose
+     hairline between them is the apply transaction in flight. */
+  .pp-chips {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .pp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.3125rem 0.75rem;
+    border: var(--hairline-width) solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: oklch(var(--card-foreground) / 0.8);
+  }
+
+  .pp-chip--active {
+    border-color: oklch(var(--xlet-accent));
+    color: oklch(var(--xlet-accent));
+    font-weight: 600;
+  }
+
+  .pp-chip__check {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    background: oklch(var(--xlet-accent));
+  }
+
+  .pp-chip__dot {
+    inline-size: 0.375rem;
+    block-size: 0.375rem;
+    background: oklch(var(--xlet-accent));
+  }
+
+  .pp-preview {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+
+  @media (min-width: 48rem) {
+    .pp-preview {
+      grid-template-columns: minmax(0, 1fr) minmax(4rem, 0.35fr) minmax(0, 1fr);
+    }
+  }
+
+  .pp-pane {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    padding: var(--space-3);
+    border: var(--hairline-width) dashed var(--hairline-strong);
+  }
+
+  .pp-pane__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .pp-pane__bars {
+    display: grid;
+    gap: 5px;
+    inline-size: 100%;
+  }
+
+  .pp-pane__bars i {
+    display: block;
+    block-size: 6px;
+    border: var(--hairline-width) solid var(--rule);
+    background: oklch(var(--muted-foreground) / 0.2);
+  }
+
+  /* the desklet landing on the desk: one small square, off the panel row */
+  .pp-desklet {
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    justify-self: end;
+    margin-block: 0.25rem 0;
+    border: var(--hairline-width) solid oklch(var(--xlet-accent));
+    background: oklch(var(--xlet-accent) / 0.12);
+  }
+
+  .pp-progress {
+    align-self: center;
+    block-size: 1px;
+    inline-size: 100%;
+    background: linear-gradient(
+      to right,
+      oklch(var(--xlet-accent)) 0 62%,
+      var(--rule) 62% 100%
+    );
   }
 
   /* Profile rows: flat hairline rows, hover outlined like a workspace tile */
@@ -260,7 +401,8 @@ const rows: SettingsRow[] = [
     color: oklch(var(--muted-foreground));
   }
 
-  /* Micro state strip: neutral snapshot, red apply, green verified */
+  /* Micro state strip: neutral snapshot, red apply, verified in the page's
+     own rose. One accent hue per page: no green here. */
   .pp-state {
     margin-top: var(--space-5);
   }
@@ -282,7 +424,7 @@ const rows: SettingsRow[] = [
   }
 
   .pp-state__seg--ok {
-    background: oklch(var(--state-ok));
+    background: oklch(var(--xlet-accent-bright));
   }
 
   .pp-state__labels {
@@ -298,7 +440,7 @@ const rows: SettingsRow[] = [
   }
 
   .pp-state__ok {
-    color: oklch(var(--state-ok));
+    color: oklch(var(--xlet-accent-bright));
   }
 
   .pp-state__fail {
@@ -345,5 +487,17 @@ const rows: SettingsRow[] = [
     letter-spacing: 0.06em;
     color: oklch(var(--muted-foreground));
     max-width: 40ch;
+  }
+</style>
+
+<style is:global>
+  /* One accent hue per page: the shared settings window paints "on"
+     switches in the site mint; on this page they take the rose. */
+  .pp-settings .settings-window .sw--on {
+    background: oklch(var(--xlet-accent) / 0.25);
+  }
+
+  .pp-settings .settings-window span.sw--on span.sw__thumb {
+    background: oklch(var(--xlet-accent));
   }
 </style>
