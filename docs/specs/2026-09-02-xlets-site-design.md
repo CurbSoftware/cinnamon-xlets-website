@@ -126,6 +126,38 @@ astro:assets `getImage`.
 4. Known follow-up (other repo): curbsoftware-web-static carries five stale
    CurbSoftware/cinnamon-* GitHub links. Fix there after this ships.
 
+## Critic loop record (phase 4)
+
+Round 1 (11 page shots + 8 blind A/B plates vs buttons.curbsoftware.com,
+curbsoftware.com, tailwindcss.com): 10 of 11 pages SHIP at 9/10; one FIX
+(workspace-grid, a foreign-hue finding that pixel audit traced inside the
+truthful product screenshot, which the brief exempts). The candidate's side
+won all 8 blind plates, one closely. Fix pass landed all findings: frame
+material pass (mint edge light + real perspective), hue audit of every HTML
+demo, signature moments for workspace-grid and panel-profiles, second
+edge-to-edge strip for workspace-names, wider world-clock settings window,
+ticker edge fades, sliver crops with keyline, footer recompose, light accent
+ramp, install path wrapping and copy affordances.
+
+Round 2 (fresh captures, re-randomized plates): all 11 pages SHIP at 9/10,
+15 of 15 round-1 fixes verified on the built site. Blind plates: 6 wins for
+the candidate, 2 honest ties leaning candidate. Verdict: AAA, would defend
+in an Awwwards jury.
+
+Evidence-pipeline findings from the critic, both fixed: capture script now
+settles reveals (reduced-motion emulation + forced reveal-in + a HOLLOW
+assertion), and all shot and plate filenames carry a per-run nonce so stale
+image caches cannot serve a previous round as this round.
+
+Residual P2s, accepted as shipped (non-blocking per the critic):
+1. Home carries one full-width uniform divider band between the editorial
+   and finale chapters that reads slightly mechanical.
+2. The light-theme bright accent ramp computes 4.36:1 for mint, a hair under
+   the 4.4:1 claim; the numerals use the standard ramp (7.0:1+) and the
+   bright ramp is not used for text-bearing elements.
+3. Panel-profiles demos lean on the mint tile grammar; watch that rose stays
+   unmistakably the page hue if that section is edited again.
+
 ## Out of scope
 
 Starlight docs section, blog, analytics, newsletter, contact forms, client

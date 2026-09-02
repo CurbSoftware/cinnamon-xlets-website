@@ -1,0 +1,34 @@
+{
+  "dark-desktop-workspace-names-vs-curbsoftware.png": {
+    "left": "ref:curbsoftware",
+    "right": "candidate:workspace-names"
+  },
+  "dark-desktop-home-vs-buttons.png": {
+    "left": "candidate:home",
+    "right": "ref:buttons"
+  },
+  "dark-desktop-color-timer-clock-vs-buttons.png": {
+    "left": "candidate:color-timer-clock",
+    "right": "ref:buttons"
+  },
+  "dark-desktop-install-vs-tailwindcss.png": {
+    "left": "candidate:install",
+    "right": "ref:tailwindcss"
+  },
+  "light-desktop-home-vs-buttons.png": {
+    "left": "candidate:home",
+    "right": "ref:buttons"
+  },
+  "dark-mobile-home-vs-buttons.png": {
+    "left": "candidate:home",
+    "right": "ref:buttons"
+  },
+  "dark-mobile-install-vs-tailwindcss.png": {
+    "left": "ref:tailwindcss",
+    "right": "candidate:install"
+  },
+  "light-mobile-home-vs-tailwindcss.png": {
+    "left": "candidate:home",
+    "right": "ref:tailwindcss"
+  }
+}

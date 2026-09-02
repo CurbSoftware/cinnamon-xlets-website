@@ -42,6 +42,9 @@ const baseIdx = args.indexOf('--base');
 const base = refsMode ? '' : baseIdx >= 0 ? args[baseIdx + 1] : 'http://localhost:4399';
 const routesIdx = args.indexOf('--routes');
 const only = routesIdx >= 0 ? new Set(args[routesIdx + 1].split(',')) : null;
+// Filename nonce per run: downstream image caches key on paths, so two runs
+// of the same route must never share a filename (critic round 2 finding).
+const NONCE = Date.now().toString(36);
 
 mkdirSync(resolve(root, 'shots'), { recursive: true });
 
@@ -53,6 +56,10 @@ async function shoot(url, out, viewport, theme) {
     deviceScaleFactor: 2, // crisp for the vision critic
   });
   try {
+    // Reduced motion makes every reveal instant, so a fullPage capture
+    // cannot clip below-fold content at opacity 0 (critic round 2 P0:
+    // hollow screenshots). Belt and braces: force .reveal-in too.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.addInitScript(
       (t) => {
         try { localStorage.setItem('xlets-theme', t); } catch {}
@@ -61,7 +68,19 @@ async function shoot(url, out, viewport, theme) {
     );
     await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
     await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(900); // reveal animations settle
+    await page.evaluate(() => {
+      document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('reveal-in'));
+    });
+    await page.waitForTimeout(900); // fonts and layout settle
+    const hidden = await page.evaluate(() =>
+      [...document.querySelectorAll('[data-reveal]')].filter(
+        (el) => getComputedStyle(el).opacity === '0'
+      ).length
+    );
+    if (hidden > 0) {
+      console.error(`HOLLOW ${url}: ${hidden} reveal elements still at opacity 0`);
+      process.exitCode = 1;
+    }
     await page.screenshot({ path: out, fullPage: true });
     console.log(`shot ${out}`);
   } catch (err) {
@@ -76,7 +95,7 @@ if (refsMode) {
   mkdirSync(resolve(root, 'shots/refs'), { recursive: true });
   for (const [name, url] of REFS) {
     for (const [vpName, viewport] of VIEWPORTS) {
-      await shoot(url, resolve(root, `shots/refs/${name}-${vpName}.png`), viewport, 'dark');
+      await shoot(url, resolve(root, `shots/refs/${name}-${vpName}-${NONCE}.png`), viewport, 'dark');
     }
   }
 } else {
@@ -86,7 +105,7 @@ if (refsMode) {
       mkdirSync(dir, { recursive: true });
       for (const [slug, path] of ROUTES) {
         if (only && !only.has(slug)) continue;
-        await shoot(base + path, resolve(dir, `${slug}.png`), viewport, theme);
+        await shoot(base + path, resolve(dir, `${slug}-${NONCE}.png`), viewport, theme);
       }
     }
   }

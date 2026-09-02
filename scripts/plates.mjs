@@ -4,7 +4,7 @@
 // Usage: node scripts/plates.mjs dark desktop home buttons   # candidate vs ref
 //        node scripts/plates.mjs --all                       # every candidate vs every ref
 import sharp from 'sharp';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -12,6 +12,19 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REF_NAMES = ['buttons', 'curbsoftware', 'tailwindcss'];
 const CANDIDATES = ['home', 'world-clock', 'color-timer-clock', 'workspace-grid', 'workspace-names', 'panel-profiles', 'install', '404'];
 const VIEWPORTS = ['desktop', 'mobile'];
+// Filename nonce per run: image caches key on paths, so no plate may reuse a
+// name from a previous round (critic round 2 finding).
+const NONCE = Date.now().toString(36);
+
+// Candidate/ref shots carry a per-run nonce suffix; pick the newest match.
+function latestWithNonce(dir, stem) {
+  if (!existsSync(dir)) return null;
+  const matches = readdirSync(dir)
+    .filter((f) => f === `${stem}.png` || f.startsWith(`${stem}-`))
+    .map((f) => ({ f, m: statSync(resolve(dir, f)).mtimeMs }))
+    .sort((a, b) => b.m - a.m);
+  return matches[0]?.f ?? null;
+}
 
 const args = process.argv.slice(2);
 const mapPath = resolve(root, 'shots/plates-map.json');
@@ -29,13 +42,18 @@ async function load(path) {
 }
 
 async function plate(theme, viewport, candidate, ref) {
-  const candPath = resolve(root, `shots/${theme}/${viewport}/${candidate}.png`);
-  const refPath = resolve(root, `shots/refs/${ref}-${viewport}.png`);
-  const a = await load(candPath);
-  const b = await load(refPath);
+  const candDir = resolve(root, `shots/${theme}/${viewport}`);
+  const candFile = latestWithNonce(candDir, candidate);
+  const refFile = latestWithNonce(resolve(root, 'shots/refs'), `${ref}-${viewport}`);
+  if (!candFile || !refFile) {
+    console.log(`skip ${theme}-${viewport}-${candidate}-vs-${ref}: missing source`);
+    return;
+  }
+  const a = await load(resolve(candDir, candFile));
+  const b = await load(resolve(root, 'shots/refs', refFile));
   if (!a || !b) return;
 
-  const outName = `${theme}-${viewport}-${candidate}-vs-${ref}.png`;
+  const outName = `${theme}-${viewport}-${candidate}-vs-${ref}-${NONCE}.png`;
   const outPath = resolve(root, `shots/plates/${outName}`);
   if (existsSync(outPath) && map[outName]) {
     console.log(`skip ${outName} (exists, mapping kept)`);
