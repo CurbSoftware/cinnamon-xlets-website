@@ -2,7 +2,7 @@
 uuid: "cinnamon-panel-profiles-applet@curbsoftware"
 name: "Panel Profiles"
 kind: "applet"
-version: "1.4.0"
+version: "1.4.1"
 tagline: "Save a panel layout by name. Restore it exactly."
 summary: "Saves panels, monitor placement, and every applet setting into named profiles, then restores them on click with automatic rollback."
 order: 150
