@@ -15,11 +15,11 @@ Write all user facing text in a human-friendly way. Humanize writing by:
 ## What this is
 
 Marketing site for five Linux Mint Cinnamon desklets and applets (xlets) by
-RobertAlexanderH / CurbSoftware. Static Astro 7 site deployed to Cloudflare
+CurbSoftware. Static Astro 7 site deployed to Cloudflare
 Workers static assets on `xlets.curbsoftware.com`.
 
-The xlets live in the sibling monorepo `/home/user/projects/cinnamon-monorepo`.
-Each also has a standalone publish repo under `github.com/RobertAlexanderH/`.
+The xlets live in the sibling monorepo `../cinnamon-monorepo`.
+Each also has a standalone publish repo under `github.com/CurbSoftware/`.
 This site never edits those; it only reads screenshots from the monorepo via
 the sync script and mirrors versions in content frontmatter.
 
@@ -71,7 +71,8 @@ pnpm deploy       # build + wrangler deploy
   `desk.webp` (optional full desktop).
 - e2e specs in `e2e/`: `pages.spec.ts` (routes, single h1, nav/footer, no
   overflow, zero console errors), `shots.spec.ts` (images load, alt text),
-  `install.spec.ts` (correct uuid paths, RobertAlexanderH links, copy button),
+  `install.spec.ts` (correct uuid paths, CurbSoftware links, commands that
+  survive a second run, copy button),
   `motion.spec.ts` (reduced-motion and JS-blocked visibility).
 - Docs: engineering specs in `docs/specs/`, art direction in `docs/brief/`.
   The brief is the design contract; read it before touching section CSS.

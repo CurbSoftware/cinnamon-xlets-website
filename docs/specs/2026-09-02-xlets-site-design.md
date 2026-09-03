@@ -7,7 +7,7 @@ Owner: CurbSoftware
 ## Context
 
 Five original Cinnamon xlets (three desklets, two applets) live in the
-cinnamon-monorepo with standalone publish repos under RobertAlexanderH. They
+cinnamon-monorepo with standalone publish repos under CurbSoftware. They
 have no dedicated home on the web. The CurbSoftware company site carries short
 project entries but is not a product showcase, and its GitHub links are stale.
 
@@ -37,7 +37,7 @@ the art direction brief in `docs/brief/` are the contract.
 | tagline, summary, features, story | monorepo READMEs, em-dash scrubbed |
 | settings showcase labels | `settings-schema.json` per xlet |
 | screenshots | monorepo `<uuid>/screenshots/*.webp` via `pnpm sync:assets` |
-| repo URLs | `github.com/RobertAlexanderH/<repo>` |
+| repo URLs | `github.com/CurbSoftware/<repo>` |
 
 The five xlets:
 

@@ -13,7 +13,8 @@ import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const MONOREPO = '/home/user/projects/cinnamon-monorepo';
+// Sibling of this repo, wherever the pair is checked out.
+const MONOREPO = process.env.CINNAMON_MONOREPO ?? resolve(root, '../cinnamon-monorepo');
 
 // slug -> monorepo xlet directory (uuid)
 const XLETS = {

@@ -1,7 +1,7 @@
 # xlets
 
 Marketing site for five Linux Mint Cinnamon desklets and applets by
-RobertAlexanderH / CurbSoftware. Static Astro site deployed to Cloudflare
+CurbSoftware. Static Astro site deployed to Cloudflare
 Workers static assets at `xlets.curbsoftware.com`.
 
 ## Commands

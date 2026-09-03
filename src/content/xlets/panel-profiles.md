@@ -6,7 +6,7 @@ version: "1.4.0"
 tagline: "Save a panel layout by name. Restore it exactly."
 summary: "Saves panels, monitor placement, and every applet setting into named profiles, then restores them on click with automatic rollback."
 order: 150
-repo: "https://github.com/RobertAlexanderH/cinnamon-panel-profiles-applet"
+repo: "https://github.com/CurbSoftware/cinnamon-panel-profiles-applet"
 spicesUrl: null
 derivedFrom: null
 license: "GPL-2.0-or-later"

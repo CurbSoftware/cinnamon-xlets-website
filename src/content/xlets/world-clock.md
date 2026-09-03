@@ -6,7 +6,7 @@ version: "1.1.0"
 tagline: "A grid of clocks, one per timezone, always visible on the desktop."
 summary: "A Cinnamon desklet showing a grid of named clocks, each on its own timezone. Click to add one, right-click to edit, glance to know."
 order: 110
-repo: "https://github.com/RobertAlexanderH/cinnamon-world-clock-desklet"
+repo: "https://github.com/CurbSoftware/cinnamon-world-clock-desklet"
 spicesUrl: null
 derivedFrom:
   name: "TimeAndDate@nightflame"

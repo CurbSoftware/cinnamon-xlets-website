@@ -8,7 +8,10 @@ import { xletSchema } from './schemas';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ENTRIES_DIR = resolve(here, 'xlets');
-const MONOREPO = '/home/user/projects/cinnamon-monorepo';
+// Sibling of this repo, wherever the pair is checked out. Hardcoding one
+// person's home is how the version-drift check below went silently skipped.
+const MONOREPO =
+  process.env.CINNAMON_MONOREPO ?? resolve(here, '../../../cinnamon-monorepo');
 
 // ponytail: strict-subset YAML parser, only what our frontmatter uses
 // (quoted scalars, bare scalars, one nested block, string lists). If entries

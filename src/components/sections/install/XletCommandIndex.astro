@@ -17,7 +17,7 @@ const rows = entries.map((entry, i) => ({
   entry,
   install: deriveInstall(entry.data.uuid, entry.data.kind),
   numeral: String(i + 1).padStart(2, '0'),
-  repoName: entry.data.repo.replace('https://github.com/RobertAlexanderH/', ''),
+  repoName: entry.data.repo.replace('https://github.com/CurbSoftware/', ''),
   delay: `--reveal-delay:${(i % 4) * 60}ms`,
 }));
 
@@ -52,7 +52,7 @@ const segs = (s: string): string[] => s.split(/(?<=[/@])/);
               </h3>
               <MonoChip label={entry.data.kind.toUpperCase()} />
               <a class="install-index__repo" href={entry.data.repo} rel="noopener">
-                RobertAlexanderH/{repoName}
+                CurbSoftware/{repoName}
               </a>
             </div>
             <CopyBlock

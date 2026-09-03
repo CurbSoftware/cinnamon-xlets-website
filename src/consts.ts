@@ -9,13 +9,13 @@ export const SITE = {
 } as const;
 
 export const LINKS = {
-  org: 'https://github.com/RobertAlexanderH',
+  org: 'https://github.com/CurbSoftware',
   repos: {
-    'world-clock': 'https://github.com/RobertAlexanderH/cinnamon-world-clock-desklet',
-    'color-timer-clock': 'https://github.com/RobertAlexanderH/cinnamon-color-timer-clock-desklet',
-    'workspace-grid': 'https://github.com/RobertAlexanderH/cinnamon-workspace-grid-desklet',
-    'workspace-names': 'https://github.com/RobertAlexanderH/cinnamon-workspace-names-applet',
-    'panel-profiles': 'https://github.com/RobertAlexanderH/cinnamon-panel-profiles-applet',
+    'world-clock': 'https://github.com/CurbSoftware/cinnamon-world-clock-desklet',
+    'color-timer-clock': 'https://github.com/CurbSoftware/cinnamon-color-timer-clock-desklet',
+    'workspace-grid': 'https://github.com/CurbSoftware/cinnamon-workspace-grid-desklet',
+    'workspace-names': 'https://github.com/CurbSoftware/cinnamon-workspace-names-applet',
+    'panel-profiles': 'https://github.com/CurbSoftware/cinnamon-panel-profiles-applet',
   },
   monorepo: 'https://github.com/CurbSoftware/cinnamon-monorepo',
   curbsoftware: 'https://curbsoftware.com',

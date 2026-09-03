@@ -6,7 +6,7 @@ version: "1.2.0"
 tagline: "Every workspace, living on the panel."
 summary: "A named button per workspace right on the Cinnamon panel. Click to switch; the menu adds, renames, and removes."
 order: 140
-repo: "https://github.com/RobertAlexanderH/cinnamon-workspace-names-applet"
+repo: "https://github.com/CurbSoftware/cinnamon-workspace-names-applet"
 spicesUrl: null
 derivedFrom:
   name: "workspace-name@willurd"

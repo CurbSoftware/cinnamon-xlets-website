@@ -12,7 +12,7 @@ export interface InstallPlan {
   commands: { zip: string[]; git: string[] };
 }
 
-// uuid -> standalone publish repo under RobertAlexanderH. Kept here (not in
+// uuid -> standalone publish repo under CurbSoftware. Kept here (not in
 // consts) on purpose: install commands derive from uuid + kind, never from
 // content files, so the five pages cannot drift. Shape matches the monorepo
 // README manual install sections (curl -fLO the release zip, unzip, rm -rf
@@ -30,20 +30,28 @@ export function deriveInstall(uuid: string, kind: XletKind): InstallPlan {
   if (!repo) throw new Error(`unknown uuid: ${uuid}`);
   const family = kind === 'desklet' ? 'desklets' : 'applets';
   const targetDir = `~/.local/share/cinnamon/${family}/${uuid}`;
-  const zipUrl = `https://github.com/RobertAlexanderH/${repo}/releases/latest/download/${repo}.zip`;
+  const familyDir = `~/.local/share/cinnamon/${family}`;
+  const zipUrl = `https://github.com/CurbSoftware/${repo}/releases/latest/download/${repo}.zip`;
+  // Every line has to survive a second run, because the second run is the
+  // upgrade. unzip without -o stops at an interactive overwrite prompt and
+  // swallows the rest of a pasted block; a second git clone aborts and leaves
+  // the stale checkout behind; and the family dir does not exist yet on a
+  // machine that has never installed a desklet or applet.
   return {
     zipUrl,
     targetDir,
     commands: {
       zip: [
         `curl -fLO ${zipUrl}`,
-        `unzip ${repo}.zip`,
+        `unzip -o ${repo}.zip`,
+        `mkdir -p ${familyDir}`,
         `rm -rf ${targetDir}`,
         `cp -r ${uuid}/files/${uuid} ${targetDir}`,
       ],
       git: [
-        `git clone https://github.com/RobertAlexanderH/${repo}.git`,
+        `git clone https://github.com/CurbSoftware/${repo}.git || git -C ${repo} pull`,
         `cd ${repo}`,
+        `mkdir -p ${familyDir}`,
         `rm -rf ${targetDir}`,
         `cp -r files/${uuid} ${targetDir}`,
       ],

@@ -6,7 +6,7 @@ version: "1.3.1"
 tagline: "The workspace map, pinned to your desktop."
 summary: "One clickable tile per workspace, as plain names or live desktop previews, with the active workspace outlined."
 order: 130
-repo: "https://github.com/RobertAlexanderH/cinnamon-workspace-grid-desklet"
+repo: "https://github.com/CurbSoftware/cinnamon-workspace-grid-desklet"
 spicesUrl: null
 derivedFrom: null
 license: "GPL-2.0-or-later"
