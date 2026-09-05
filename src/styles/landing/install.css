@@ -255,6 +255,21 @@
   margin-top: var(--space-4);
 }
 
+/* The row's screenshot: same shot The set crops to a sliver, here full
+   frame and large. Hairline frame keeps the quiet, technical register. */
+.install-index__shot {
+  display: block;
+  max-width: 40rem;
+  margin-bottom: var(--space-4);
+  border: var(--hairline-width) solid var(--rule);
+}
+
+.install-index__shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* Tile grammar reaches the copy affordance: when a row or step is hovered
    or keyboard-focused within, its copy button steps up to the mint hairline
    and a foreground COPY label, so the page's one interactive element is

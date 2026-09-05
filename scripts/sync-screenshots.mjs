@@ -1,20 +1,22 @@
 // Copy product screenshots from the sibling monorepo into src/assets/xlets/
 // with normalized names: shot.webp (hero), config.webp (settings window),
-// desk.webp (optional full desktop; missing for workspace-names and
-// panel-profiles, that is fine).
-// Special case: the workspace-names source shot is a 3840x2160 promo frame
-// that is mostly wallpaper; its hero is the true panel strip, so we crop the
-// bottom band (panel) out of it after copying. The crop is part of the sync
-// so re-running stays idempotent.
-// Run: pnpm sync:assets (needs sharp from the project devDependencies)
+// desk.webp (optional full desktop; missing only for panel-profiles, that
+// is fine).
+// Run: pnpm sync:assets
 import { cpSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import sharp from 'sharp';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-// Sibling of this repo, wherever the pair is checked out.
-const MONOREPO = process.env.CINNAMON_MONOREPO ?? resolve(root, '../cinnamon-monorepo');
+// Sibling of this repo, wherever the pair is checked out. The second
+// candidate covers the websites-folder layout where product repos live
+// outside websites/.
+const MONOREPO =
+  process.env.CINNAMON_MONOREPO ??
+  [
+    resolve(root, '../cinnamon-monorepo'),
+    resolve(root, '../../cinnamon/cinnamon-monorepo'),
+  ].find((p) => existsSync(p));
 
 // slug -> monorepo xlet directory (uuid)
 const XLETS = {
@@ -55,18 +57,4 @@ for (const [slug, uuid] of Object.entries(XLETS)) {
     console.log(`${slug}: ${file} -> ${target}`);
   }
   if (!copied) console.warn(`${slug}: no screenshots matched`);
-
-  if (slug === 'workspace-names') {
-    // 3840x2160 promo frame: keep the bottom panel strip (the product) and
-    // drop the wallpaper above it. Panel sits in roughly the last 5 percent
-    // of the frame; take 160px so it breathes.
-    const shot = join(outDir, 'shot.webp');
-    const buf = await sharp(shot)
-      .extract({ left: 0, top: 2000, width: 3840, height: 160 })
-      .webp({ quality: 90 })
-      .toBuffer();
-    const { width, height } = await sharp(buf).metadata();
-    await sharp(buf).toFile(shot);
-    console.log(`workspace-names: cropped shot.webp to ${width}x${height}`);
-  }
 }

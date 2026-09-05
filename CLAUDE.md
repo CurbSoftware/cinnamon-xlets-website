@@ -18,7 +18,8 @@ Marketing site for five Linux Mint Cinnamon desklets and applets (xlets) by
 CurbSoftware. Static Astro 7 site deployed to Cloudflare
 Workers static assets on `xlets.curbsoftware.com`.
 
-The xlets live in the sibling monorepo `../cinnamon-monorepo`.
+The xlets live in the sibling monorepo
+`/home/user/projects/cinnamon/cinnamon-monorepo`.
 Each also has a standalone publish repo under `github.com/CurbSoftware/`.
 This site never edits those; it only reads screenshots from the monorepo via
 the sync script and mirrors versions in content frontmatter.

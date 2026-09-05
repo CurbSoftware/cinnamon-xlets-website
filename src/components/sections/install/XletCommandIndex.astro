@@ -3,6 +3,7 @@
 // cards. Commands derive from uuid + kind via lib/xlets.ts. Each row sets
 // its own --xlet-hue so the numeral carries the xlet accent (brief 2);
 // data-xlet-slug is the e2e contract hook.
+import { Image } from 'astro:assets';
 import CopyBlock from '../../ui/CopyBlock.astro';
 import Eyebrow from '../../ui/Eyebrow.astro';
 import MonoChip from '../../ui/MonoChip.astro';
@@ -19,6 +20,7 @@ const rows = entries.map((entry, i) => ({
   numeral: String(i + 1).padStart(2, '0'),
   repoName: entry.data.repo.replace('https://github.com/CurbSoftware/', ''),
   delay: `--reveal-delay:${(i % 4) * 60}ms`,
+  shot: entry.data.shot,
 }));
 
 // Break opportunities after / and @ so the uuid folds after its @ suffix on
@@ -37,7 +39,7 @@ const segs = (s: string): string[] => s.split(/(?<=[/@])/);
 
   <ul class="install-index__rows">
     {
-      rows.map(({ entry, install, numeral, repoName, delay }) => (
+      rows.map(({ entry, install, numeral, repoName, delay, shot }) => (
         <li
           class="install-index__row"
           data-xlet-slug={entry.id}
@@ -46,6 +48,16 @@ const segs = (s: string): string[] => s.split(/(?<=[/@])/);
         >
           <span class="install-index__num" aria-hidden="true">{numeral}</span>
           <div class="install-index__main">
+            <span class="install-index__shot">
+              <Image
+                src={shot}
+                alt={`${entry.data.name} ${entry.data.kind} on a Cinnamon desktop`}
+                widths={[900, 600, 400]}
+                sizes="(min-width: 68rem) 40rem, 90vw"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
             <div class="install-index__head">
               <h3 class="install-index__name">
                 <a href={`/xlets/${entry.id}/`}>{entry.data.name}</a>

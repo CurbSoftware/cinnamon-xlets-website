@@ -8,6 +8,10 @@ import { CITIES, timeIn } from './time';
 
 const now = new Date();
 const items = CITIES.map((c) => ({ ...c, time: timeIn(c.tz, now) }));
+
+// One city set is ~700px; each marquee group must beat the widest viewport
+// or the loop shows a gap. 6 reps cover ~4200px screens.
+const REPEATS = 6;
 ---
 
 <section class="ticker" aria-label="World clock times">
@@ -23,13 +27,15 @@ const items = CITIES.map((c) => ({ ...c, time: timeIn(c.tz, now) }));
     <div class="marquee-track ticker__track" aria-hidden="true">
       {Array.from({ length: 2 }).map(() => (
         <div class="ticker__group">
-          {items.map((item) => (
-            <span class="ticker__item">
-              <span class="ticker__city">{item.label}</span>
-              <span class="ticker__time" data-clock={item.tz}>{item.time}</span>
-              <span class="ticker__sep">·</span>
-            </span>
-          ))}
+          {Array.from({ length: REPEATS }).map(() =>
+            items.map((item) => (
+              <span class="ticker__item">
+                <span class="ticker__city">{item.label}</span>
+                <span class="ticker__time" data-clock={item.tz}>{item.time}</span>
+                <span class="ticker__sep">·</span>
+              </span>
+            ))
+          )}
         </div>
       ))}
     </div>

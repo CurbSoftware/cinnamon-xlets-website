@@ -479,17 +479,13 @@
   box-shadow: 0 2px 12px oklch(var(--pine-950) / 0.18);
 }
 
-/* The crop window: each row sets --shot-zoom / --shot-origin (or --shot-pos
-   for the extreme panel strip) in XletIndex.astro, hand-tuned per source
-   image so the sliver frames the bright product area, not empty desktop.
-   The zoom is a static transform (a crop, not motion). */
+/* The whole screenshot fits the frame: no zoom crop, the full desktop reads
+   as a thumbnail (box and source are both ~3:2, so cover crops nothing). */
 .xrow__shot img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: var(--shot-pos, 50% 30%);
-  transform: scale(var(--shot-zoom, 1));
-  transform-origin: var(--shot-origin, 50% 50%);
+  object-position: center;
 }
 
 .xrow:hover .xrow__shot,
@@ -702,83 +698,6 @@
   color: oklch(var(--muted-foreground));
 }
 
-/* The micro-desktop's simplest form, as faint outline shapes */
-.finale__shapes {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.finale__shape {
-  position: absolute;
-  border: var(--hairline-width) solid oklch(var(--foreground) / 0.2);
-}
-
-/* a panel strip */
-.finale__shape--panel {
-  top: 14%;
-  left: 9%;
-  width: 32%;
-  height: 2.25rem;
-}
-
-/* a clock, square like everything else, with two hands */
-.finale__shape--clock {
-  top: 22%;
-  right: 11%;
-  width: clamp(6rem, 12vw, 10rem);
-  aspect-ratio: 1;
-}
-
-.finale__shape--clock::before,
-.finale__shape--clock::after {
-  content: '';
-  position: absolute;
-  left: calc(50% - 0.5px);
-  bottom: 50%;
-  width: 1px;
-  background: oklch(var(--foreground) / 0.28);
-  transform-origin: bottom center;
-}
-
-.finale__shape--clock::before {
-  height: 34%;
-  transform: rotate(305deg);
-}
-
-.finale__shape--clock::after {
-  height: 24%;
-  transform: rotate(38deg);
-}
-
-.finale__shape--clock--late {
-  top: auto;
-  bottom: 16%;
-  right: auto;
-  left: 12%;
-  width: clamp(4rem, 8vw, 6.5rem);
-}
-
-/* a workspace tile grid, active tile carrying the mint outline */
-.finale__tiles {
-  position: absolute;
-  bottom: 14%;
-  right: 10%;
-  display: grid;
-  grid-template-columns: repeat(2, clamp(2.25rem, 5vw, 4rem));
-  gap: var(--space-2);
-}
-
-.finale__tile {
-  display: block;
-  aspect-ratio: 1;
-  border: var(--hairline-width) solid oklch(var(--foreground) / 0.2);
-}
-
-.finale__tile--active {
-  border-color: oklch(var(--primary) / 0.55);
-}
-
 /* --- Responsive: recompose, do not shrink (brief section 10) ----------------- */
 
 /* Stacked hero below 68rem: near the breakpoint the 7-column micro-desktop
@@ -913,10 +832,6 @@
 
   .finale__statement {
     font-size: clamp(2.75rem, 12vw, 4.5rem);
-  }
-
-  .finale__shape--panel {
-    display: none;
   }
 
   .install-overview__step {

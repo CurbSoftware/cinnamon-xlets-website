@@ -10,8 +10,14 @@ const here = dirname(fileURLToPath(import.meta.url));
 const ENTRIES_DIR = resolve(here, 'xlets');
 // Sibling of this repo, wherever the pair is checked out. Hardcoding one
 // person's home is how the version-drift check below went silently skipped.
+// The second candidate covers the websites-folder layout where product
+// repos live outside websites/.
 const MONOREPO =
-  process.env.CINNAMON_MONOREPO ?? resolve(here, '../../../cinnamon-monorepo');
+  process.env.CINNAMON_MONOREPO ??
+  [
+    resolve(here, '../../../cinnamon-monorepo'),
+    resolve(here, '../../../../cinnamon/cinnamon-monorepo'),
+  ].find((p) => existsSync(p));
 
 // ponytail: strict-subset YAML parser, only what our frontmatter uses
 // (quoted scalars, bare scalars, one nested block, string lists). If entries

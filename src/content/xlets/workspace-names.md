@@ -13,7 +13,6 @@ derivedFrom:
   url: "https://github.com/linuxmint/cinnamon-spices-applets/tree/master/workspace-name@willurd"
 license: "GPL-2.0-or-later"
 accentHue: 300
-heroBand: true
 features:
   - "One visible button per workspace"
   - "Name, number, or number and name labels"
@@ -25,6 +24,7 @@ features:
   - "Expo, add, rename, and remove in the menu"
 shot: ../../assets/xlets/workspace-names/shot.webp
 configShot: ../../assets/xlets/workspace-names/config.webp
+desk: ../../assets/xlets/workspace-names/desk.webp
 ---
 
 Workspaces usually live behind a keyboard shortcut and a guess. In Panel Workspace Name moves the whole map into the panel itself: one button per workspace, always visible, always current. Click one and you are there. The active button takes the panel theme's outlined state, so the map never lies about where you are.
